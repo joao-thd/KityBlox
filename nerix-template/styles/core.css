@@ -1491,3 +1491,59 @@ i.ph {
   transform-origin: center center;
   will-change: transform, filter;
 }
+
+/* KityBlox — tema rosa global */
+:root {
+  color-scheme: light;
+  --primary: 337 82% 56%;
+  --secondary: 329 86% 87%;
+  --background: 255 247 251;
+  --foreground: 73 35 56;
+  --border: 244 190 216;
+  --card: 255 255 255;
+  --muted: 255 237 246;
+  --muted-foreground: 133 83 111;
+  --muted-solid: 255 226 240;
+}
+
+html, body {
+  background-color: #fff7fb;
+  color: #492337;
+}
+
+button, [type="button"], [type="submit"], .btn, [role="button"],
+button[class*="primary"], a[class*="button"], a[class*="btn"] {
+  accent-color: #ec4899;
+}
+
+button[class*="primary"], [type="submit"], .btn-primary,
+a[class*="primary"], [class*="bg-primary"] {
+  background-color: #e83e8c;
+  border-color: #e83e8c;
+  color: #fff;
+}
+
+button[class*="primary"]:hover, [type="submit"]:hover, .btn-primary:hover,
+a[class*="primary"]:hover {
+  background-color: #d92d7b;
+  border-color: #d92d7b;
+}
+
+input, textarea, select {
+  accent-color: #e83e8c;
+  border-color: #f2bfd8;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #e83e8c;
+  outline-color: #f9a8d4;
+  box-shadow: 0 0 0 3px rgba(232, 62, 140, .14);
+}
+
+a { color: #d92d7b; }
+a:hover { color: #b91c63; }
+
+hr, [class*="border-"] { border-color: #f4c2da; }
+
+::selection { background: #f9a8d4; color: #492337; }
+
