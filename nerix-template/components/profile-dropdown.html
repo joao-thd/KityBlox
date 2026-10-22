@@ -1,0 +1,149 @@
+<% load 'affiliate_settings' %>
+
+<div class="relative z-30">
+  <button
+    type="button"
+    class="flex items-center justify-start text-start gap-2 cursor-pointer group w-max"
+    onclick="handleProfileMenu()"
+    id="profile-button"
+  >
+    <% if user and user.avatar %>
+      <img src="<%= user.avatar %>" class="size-8 rounded-cc sm:rounded-full object-cover" alt="<%= user.name %>" />
+    <% else %>
+      <div class="size-8 bg-primary flex items-center justify-center text-xs font-semibold uppercase rounded-cc sm:rounded-full text-primary-foreground">
+        <%= user.name | slice: 0, 2 | upcase %>
+      </div>
+    <% endif %>
+
+    <div class="hidden sm:block">
+      <div class="font-medium leading-tight"><%= user.name %></div>
+      <p class="text-xs text-muted-foreground">Meu perfil</p>
+    </div>
+
+    <i class="ph ph-caret-down hidden sm:block w-4 h-4 ml-auto shrink-0 transition-transform group-data-[state=open]:rotate-180 text-foreground/80" aria-hidden="true"></i>
+  </button>
+
+  <div
+    class="max-h-[calc(100vh-4rem-2.25rem)] overflow-y-auto absolute top-16 bg-background p-3 -right-12 sm:right-0 rounded-cc border border-white/10 w-[260px] origin-top-right scale-75 transition-all invisible opacity-0 duration-200 shadow-xl"
+    id="profile-menu"
+  >
+    <div class="rounded-lg bg-white/5 border border-white/10 p-2.5 flex items-center gap-2.5 mb-2">
+      <% if user and user.avatar %>
+        <img src="<%= user.avatar %>" class="size-10 rounded-md object-cover shrink-0" alt="<%= user.name %>" />
+      <% else %>
+        <div class="size-10 shrink-0 bg-primary flex items-center justify-center text-sm font-semibold uppercase rounded-md text-primary-foreground">
+          <%= user.name | slice: 0, 2 | upcase %>
+        </div>
+      <% endif %>
+      <div class="overflow-hidden min-w-0">
+        <div class="font-medium truncate"><%= user.name %></div>
+        <p class="text-xs text-muted-foreground truncate"><%= user.email %></p>
+      </div>
+    </div>
+
+    <p class="text-[11px] font-medium uppercase tracking-wide text-muted-foreground px-2 pt-1 pb-1.5">Área do cliente</p>
+
+    <div class="flex flex-col gap-0.5">
+      <a
+        href="/account/profile"
+        class="text-sm w-full p-2.5 hover:bg-white/5 flex items-center gap-2.5 rounded-lg transition text-foreground"
+      >
+        <i class="ph ph-user size-4 shrink-0 opacity-80" aria-hidden="true"></i>
+        <span>Meu perfil</span>
+      </a>
+      <a
+        href="/account/orders"
+        class="text-sm w-full p-2.5 hover:bg-white/5 flex items-center gap-2.5 rounded-lg transition text-foreground"
+      >
+        <i class="ph ph-package size-4 shrink-0 opacity-80" aria-hidden="true"></i>
+        <span>Minhas compras</span>
+      </a>
+
+      <% if affiliate_settings %>
+        <% if affiliate_settings.status == 'affiliate' or affiliate_settings.allow_self_affiliate == true %>
+          <a
+            href="/account/affiliate"
+            class="text-sm w-full p-2.5 hover:bg-white/5 flex items-center gap-2.5 rounded-lg transition text-foreground"
+          >
+            <i class="ph ph-chart-line-up size-4 shrink-0 opacity-80" aria-hidden="true"></i>
+            <span>Área do afiliado</span>
+          </a>
+        <% endif %>
+      <% endif %>
+
+      <a
+        href="/account/loyalty"
+        class="text-sm w-full p-2.5 hover:bg-white/5 flex items-center gap-2.5 rounded-lg transition text-foreground"
+      >
+        <i class="ph ph-coins size-4 shrink-0 opacity-80" aria-hidden="true"></i>
+        <span>Fidelidade</span>
+      </a>
+    </div>
+
+    <hr class="border-white/10 my-2.5" />
+
+    <div class="flex flex-col gap-0.5">
+      <a href="/" class="text-sm w-full p-2.5 hover:bg-white/5 flex items-center gap-2.5 rounded-lg transition text-foreground">
+        <i class="ph ph-storefront size-4 shrink-0 opacity-80" aria-hidden="true"></i>
+        <span>Voltar para a loja</span>
+      </a>
+      <button
+        type="button"
+        class="text-sm w-full p-2.5 text-red-400 hover:bg-red-500/10 flex items-center gap-2.5 rounded-lg transition text-start"
+        onclick="logout()"
+      >
+        <i class="ph ph-sign-out size-4 shrink-0" aria-hidden="true"></i>
+        <span>Sair da conta</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const profileMenu = document.getElementById('profile-menu');
+  const profileButton = document.getElementById('profile-button');
+
+  function openProfileMenu() {
+    if (!profileButton || !profileMenu) return;
+    profileButton.setAttribute('data-state', 'open');
+    profileMenu.classList.remove('invisible');
+    setTimeout(function () {
+      profileMenu.classList.add('scale-100', 'opacity-100');
+    }, 1);
+  }
+
+  function closeProfileMenu() {
+    if (!profileButton || !profileMenu) return;
+    profileButton.setAttribute('data-state', 'closed');
+    profileMenu.classList.remove('scale-100', 'opacity-100');
+    profileMenu.classList.add('scale-75', 'opacity-0');
+    setTimeout(function () {
+      profileMenu.classList.add('invisible');
+    }, 199);
+  }
+
+  function handleProfileMenu() {
+    if (!profileMenu || !profileButton) return;
+    if (profileMenu.classList.contains('invisible')) {
+      openProfileMenu();
+    } else {
+      closeProfileMenu();
+    }
+  }
+
+  function logout() {
+    if (typeof Nerix === 'undefined' || typeof Nerix.logout !== 'function') return;
+    Nerix.logout().then(function () {
+      window.location.href = typeof shopUrl === 'function' ? shopUrl('/login') : '/login';
+    });
+  }
+
+  window.addEventListener('click', function (event) {
+    if (!profileMenu || !profileButton) return;
+    const isClickInsideMenu = profileMenu.contains(event.target);
+    const isClickOnButton = profileButton.contains(event.target);
+    if (!isClickInsideMenu && !isClickOnButton) {
+      closeProfileMenu();
+    }
+  });
+</script>

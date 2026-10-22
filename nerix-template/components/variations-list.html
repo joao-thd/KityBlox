@@ -1,0 +1,58 @@
+<% if package.variations.size > 0 %>
+  <div class="mb-3">
+    <p class="text-sm font-semibold text-foreground">Escolha uma opção</p>
+    <p class="text-xs text-muted-foreground mt-0.5">Selecione a variação desejada antes de continuar.</p>
+  </div>
+  <div id="variation-list" class="space-y-3 mb-6 max-h-[320px] overflow-y-auto custom-scrollbar pr-2" data-variation-count="<%= package.variations.size %>">
+    <% for variation in package.variations %>
+      <button 
+        type="button"
+        class="group w-full rounded-xl border-2 transition-all duration-300 p-4 sm:p-4.5 flex text-start items-center justify-between gap-4
+        border-[#FFB7D5] bg-white hover:border-[#FF69B4] hover:bg-[#FFF0F6] hover:shadow-[0_10px_24px_rgba(232,62,140,0.15)]
+        data-[selected=true]:border-[#FF69B4] data-[selected=true]:bg-[#FF69B4]/10 data-[selected=true]:shadow-[0_10px_24px_rgba(232,62,140,0.2)]
+        data-[selected=true]:ring-2 data-[selected=true]:ring-[#FF69B4]/25"
+        data-action="select-variation"
+        data-variation-id="<%= variation.id %>"
+        data-variation-slug="<%= variation.slug %>"
+        data-selected="<%= variation.id == display_package.id %>"
+      >
+        <div class="flex items-center gap-4 flex-1 min-w-0">
+          <% if variation.icon %>
+            <img src="<%= variation.icon %>" alt="<%= variation.name %>" class="rounded-lg size-10 object-cover flex-shrink-0 border border-white/15" />
+          <% else %>
+            <div class="w-5 h-5 border-2 rounded-full flex items-center justify-center border-[#FFB7D5] group-data-[selected=true]:border-[#FF69B4] flex-shrink-0 transition-all duration-200 group-data-[selected=true]:scale-110">
+              <div class="w-2.5 h-2.5 rounded-full hidden group-data-[selected=true]:block bg-[#FF69B4] shadow-lg shadow-[#FF69B4]/40"></div>
+            </div>
+          <% endif %>
+          <div class="flex flex-col flex-1 min-w-0">
+            <span class="font-semibold text-sm sm:text-[15px] line-clamp-1 text-foreground group-data-[selected=true]:text-foreground transition-colors" title="<%= variation.name %>"><%= variation.name %></span>
+            <span class="text-xs sm:text-sm mt-1 text-emerald-400 font-medium">
+              <% if variation.stock.quantity == null %>
+                Estoque ilimitado
+              <% else %>
+                <%= variation.stock.quantity %> em estoque
+              <% endif %>
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-end shrink-0 text-right">
+          <% if variation.pricing.compare_at %>
+            <span class="text-[11px] text-muted-foreground/85 line-through leading-none">
+              <%= variation.pricing.compare_at | format_price %>
+            </span>
+          <% endif %>
+          <div class="flex items-baseline gap-2 mt-1">
+            <% if variation.pricing.percent_discount %>
+              <span class="text-[11px] text-emerald-400 font-semibold">-<%= variation.pricing.percent_discount | abs | round %>%</span>
+            <% endif %>
+
+            <span class="font-bold text-base sm:text-lg text-foreground group-data-[selected=true]:text-foreground transition-colors">
+              <%= variation.pricing.price | format_price %>
+            </span>
+          </div>
+        </div>
+      </button>
+    <% endfor %>
+  </div>
+<% endif %>

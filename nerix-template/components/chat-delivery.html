@@ -1,0 +1,98 @@
+<div id="chat-delivery-container" class="border border-border rounded-lg bg-card overflow-hidden shadow-sm relative" data-token="<%= chat_delivery.token %>" data-channel-id="<%= chat_delivery._id %>">
+  <div class="px-4 py-3 border-b border-border bg-muted flex items-center gap-3">
+    <div class="size-8 rounded-full bg-foreground/5 flex items-center justify-center">
+      <i class="ph ph-chat-circle size-4 text-muted-foreground" aria-hidden="true"></i>
+    </div>
+    <div class="flex-1">
+      <h3 class="font-semibold text-sm text-foreground">Chat de entrega</h3>
+      <p class="text-xs text-muted-foreground">Converse com o suporte para resgatar seu pedido</p>
+    </div>
+    <button type="button" onclick="openDialog('chat-expanded')" class="size-8 rounded-lg border border-foreground/10 bg-card text-muted-foreground hover:bg-foreground/5 transition-colors flex items-center justify-center">
+      <i class="ph ph-arrows-out-simple size-4" aria-hidden="true"></i>
+    </button>
+  </div>
+  
+  <div id="chat-messages" class="h-[400px] overflow-y-auto p-4 space-y-2 bg-muted/30">
+    <div id="chat-loader" class="flex justify-center py-8">
+      <i class="ph ph-spinner size-6 text-muted-foreground animate-spin" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div id="chat-drop-overlay" class="absolute inset-0 z-50 items-center justify-center bg-foreground/50 backdrop-blur-sm hidden">
+    <div class="rounded-lg bg-card p-8 shadow-lg text-center">
+      <i class="ph ph-image-square size-12 mx-auto text-muted-foreground" aria-hidden="true"></i>
+      <p class="mt-2 font-semibold text-foreground">Solte as imagens aqui</p>
+    </div>
+  </div>
+
+  <div class="px-4 py-3 border-t border-border bg-card relative">
+    <div id="chat-new-message-indicator" class="absolute left-0 right-0 -top-[37px] z-50 hidden">
+      <button
+        type="button"
+        id="chat-go-to-bottom-btn"
+        class="flex w-full items-center justify-center gap-2 rounded-t-xl bg-foreground/10 px-4 py-2 text-sm font-medium shadow-sm transition-colors text-foreground"
+      >
+        <i class="ph ph-caret-down size-4" aria-hidden="true"></i>
+        Nova mensagem
+      </button>
+    </div>
+
+    <div id="chat-image-previews" class="hidden mb-3 flex flex-wrap gap-2"></div>
+    <form id="chat-form" class="flex gap-2">
+      <input type="file" id="chat-file-input" accept="image/jpeg,image/png,image/gif,image/webp" multiple class="hidden" />
+      <button type="button" id="chat-image-btn" class="h-10 px-3 rounded-lg border border-foreground/10 bg-card text-muted-foreground hover:bg-foreground/5 transition-colors flex items-center justify-center">
+        <i class="ph ph-image-square size-4" aria-hidden="true"></i>
+      </button>
+      <textarea id="chat-input" placeholder="Digite sua mensagem..." class="flex-1 min-h-[40px] max-h-[120px] text-sm px-3 py-2 rounded-lg border border-foreground/10 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" maxlength="1000" autocomplete="off" rows="1"></textarea>
+      <button type="submit" id="chat-submit-btn" class="h-10 px-4 rounded-lg bg-primary hover:bg-primary/80 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+        <i class="ph ph-paper-plane-right size-4" id="chat-send-icon" aria-hidden="true"></i>
+        <i class="ph ph-spinner size-4 animate-spin hidden" id="chat-loading-icon" aria-hidden="true"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="dialog-chat-expanded" class="w-screen h-screen flex items-center justify-center z-50 fixed top-0 left-0 group dialog hidden" data-state="closed">
+  <div class="h-[100dvh] sm:max-h-[85vh] overflow-hidden bg-background w-full sm:rounded-cc border sm:w-[600px] flex flex-col">
+    <div class="p-4 border-b relative shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="size-8 rounded-full bg-foreground/5 flex items-center justify-center">
+          <i class="ph ph-chat-circle size-4 text-muted-foreground" aria-hidden="true"></i>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-lg font-semibold leading-none tracking-tight">Chat de entrega</h2>
+          <p class="text-xs text-muted-foreground mt-1">Converse com o suporte para resgatar seu pedido</p>
+        </div>
+      </div>
+      <button type="button" aria-label="Fechar" class="absolute right-4 top-1/2 -translate-y-1/2 inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-foreground/5" onclick="closeDialog('chat-expanded')">
+        <i class="ph ph-x size-5" aria-hidden="true"></i>
+      </button>
+    </div>
+    
+    <div id="chat-dialog-messages" class="flex-1 overflow-y-auto p-4 space-y-2 bg-muted/30"></div>
+    
+    <div class="p-4 border-t shrink-0">
+      <div id="chat-dialog-image-previews" class="hidden mb-3 flex flex-wrap gap-2"></div>
+      <form id="chat-dialog-form" class="flex gap-2">
+        <input type="file" id="chat-dialog-file-input" accept="image/jpeg,image/png,image/gif,image/webp" multiple class="hidden" />
+        <button type="button" id="chat-dialog-image-btn" class="h-10 px-3 rounded-lg border border-foreground/10 bg-card text-muted-foreground hover:bg-foreground/5 transition-colors flex items-center justify-center">
+          <i class="ph ph-image-square size-4" aria-hidden="true"></i>
+        </button>
+        <textarea id="chat-dialog-input" placeholder="Digite sua mensagem..." class="flex-1 min-h-[40px] max-h-[120px] text-sm px-3 py-2 rounded-lg border border-foreground/10 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" maxlength="1000" autocomplete="off" rows="1"></textarea>
+        <button type="submit" id="chat-dialog-submit-btn" class="h-10 px-4 rounded-lg bg-primary hover:bg-primary/80 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+          <i class="ph ph-paper-plane-right size-4" id="chat-dialog-send-icon" aria-hidden="true"></i>
+          <i class="ph ph-spinner size-4 animate-spin hidden" id="chat-dialog-loading-icon" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="chat-lightbox" class="fixed inset-0 z-[9999] items-center justify-center bg-background/80 p-4 hidden opacity-0 transition-opacity duration-300">
+  <div class="relative">
+    <img id="chat-lightbox-img" src="" alt="Imagem ampliada" class="max-h-[90vh] max-w-[90vw] rounded-lg object-contain" />
+    <button id="chat-lightbox-close" class="bg-foreground absolute -right-3 -top-3 rounded-full p-2 text-foreground shadow-lg hover:scale-110 transition-transform">
+      <i class="ph ph-x size-5 text-background" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

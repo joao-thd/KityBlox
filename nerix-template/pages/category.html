@@ -1,0 +1,46 @@
+<% layout "layouts/layout", page_title: category.name %>
+
+<% load "packages", category_id: category.id, limit: 1000 %>
+
+<% if category.slug == 'robux' or category.id == 3210 or category.name == 'Robux' %>
+  <div class="container py-4 sm:py-8 space-y-6">
+    <% render "components/robux-calculator" %>
+  </div>
+<% else %>
+  <div class="container py-8 sm:py-12 space-y-6">
+    <div class="flex items-center gap-4">
+      <a href="/" class="w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition">
+        <i class="ph ph-caret-left w-5 h-5" aria-hidden="true"></i>
+      </a>
+      <h1 class="text-2xl sm:text-3xl font-bold text-foreground"><%= category.name %></h1>
+    </div>
+
+    <% if category.banner %>
+      <div class="legas-hero">
+        <img alt="<%= category.name %>" src="<%= category.banner %>" class="w-full h-auto object-cover pointer-events-none select-none" loading="lazy" />
+      </div>
+    <% endif %>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mt-6<% if packages.data.size == 0 %> package-list<% endif %>" data-category-id="<%= category.id %>">
+      <% for package in packages.data %>
+        <% nerix
+          assign index = forloop.index0
+          assign delay = index | modulo: 5 | times: 0.15
+        nerix %>
+
+        <div class="reveal-fade-up" style="--delay: <%= delay %>s;">
+          <% render "components/package-card", package: package %>
+        </div>
+      <% endfor %>
+    </div>
+
+    <% assign sub_categories = category.sub_categories | where_exp: "sub_category", "sub_category.id != category.id" %>
+    <% if sub_categories.size > 0 %>
+      <div class="space-y-24 mt-12">
+        <% for sub_category in sub_categories %>
+          <% render "components/category-loader", category: sub_category %>
+        <% endfor %>
+      </div>
+    <% endif %>
+  </div>
+<% endif %>

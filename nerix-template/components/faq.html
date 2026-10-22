@@ -1,0 +1,152 @@
+<section id="faq" class="container py-12 sm:py-16 scroll-m-20">
+  <div class="legas-section-heading mb-8 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4">
+    <div>
+      <span class="legas-eyebrow">DÚVIDAS FREQUENTES</span>
+      <h2 class="font-bold text-2xl sm:text-4xl text-foreground flex items-center gap-3">
+        Perguntas Frequentes
+      </h2>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 text-sm text-muted-foreground bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+      <i class="ph ph-question size-5 text-primary" aria-hidden="true"></i>
+      <span>Central de Ajuda</span>
+    </div>
+  </div>
+
+  <div class="grid gap-3.5 max-w-4xl mx-auto">
+    <!-- Item 1 -->
+    <div class="faq-item group rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.05]">
+      <button
+        type="button"
+        onclick="toggleFaq(this)"
+        class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-semibold text-base sm:text-lg text-foreground focus-visible:outline-none"
+      >
+        <span class="flex items-center gap-3.5">
+          <span class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+            <i class="ph ph-shield-check size-5" aria-hidden="true"></i>
+          </span>
+          É seguro comprar na <%= store.name | default: 'BLOXREALM' %>?
+        </span>
+        <i class="ph ph-caret-down size-5 text-muted-foreground transition-transform duration-300 group-hover:text-primary faq-icon" aria-hidden="true"></i>
+      </button>
+      <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out px-5 sm:px-6">
+        <div class="pb-5 sm:pb-6 text-sm sm:text-base text-muted-foreground leading-relaxed pl-11.5 border-t border-white/5 pt-3">
+          Sim. A loja trabalha com métodos de pagamento seguros, entrega acompanhada e suporte dedicado para garantir total segurança em todas as suas compras.
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="faq-item group rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.05]">
+      <button
+        type="button"
+        onclick="toggleFaq(this)"
+        class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-semibold text-base sm:text-lg text-foreground focus-visible:outline-none"
+      >
+        <span class="flex items-center gap-3.5">
+          <span class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+            <i class="ph ph-clock size-5" aria-hidden="true"></i>
+          </span>
+          Quanto tempo demora para receber meu pedido?
+        </span>
+        <i class="ph ph-caret-down size-5 text-muted-foreground transition-transform duration-300 group-hover:text-primary faq-icon" aria-hidden="true"></i>
+      </button>
+      <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out px-5 sm:px-6">
+        <div class="pb-5 sm:pb-6 text-sm sm:text-base text-muted-foreground leading-relaxed pl-11.5 border-t border-white/5 pt-3 space-y-2">
+          <p><strong class="text-foreground">Contas:</strong> entrega imediata após a confirmação do pagamento.</p>
+          <p><strong class="text-foreground">Gamepass:</strong> até 24 horas após a confirmação do pagamento.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="faq-item group rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.05]">
+      <button
+        type="button"
+        onclick="toggleFaq(this)"
+        class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-semibold text-base sm:text-lg text-foreground focus-visible:outline-none"
+      >
+        <span class="flex items-center gap-3.5">
+          <span class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+            <i class="ph ph-warning-circle size-5" aria-hidden="true"></i>
+          </span>
+          E se eu não receber o produto?
+        </span>
+        <i class="ph ph-caret-down size-5 text-muted-foreground transition-transform duration-300 group-hover:text-primary faq-icon" aria-hidden="true"></i>
+      </button>
+      <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out px-5 sm:px-6">
+        <div class="pb-5 sm:pb-6 text-sm sm:text-base text-muted-foreground leading-relaxed pl-11.5 border-t border-white/5 pt-3">
+          Verifique o painel da loja e o e-mail cadastrado na hora da compra. Se ainda precisar de ajuda, abra um ticket com nossa equipe de suporte oficial.
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="faq-item group rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.05]">
+      <button
+        type="button"
+        onclick="toggleFaq(this)"
+        class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-semibold text-base sm:text-lg text-foreground focus-visible:outline-none"
+      >
+        <span class="flex items-center gap-3.5">
+          <span class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+            <i class="ph ph-credit-card size-5" aria-hidden="true"></i>
+          </span>
+          Quais formas de pagamento estão disponíveis?
+        </span>
+        <i class="ph ph-caret-down size-5 text-muted-foreground transition-transform duration-300 group-hover:text-primary faq-icon" aria-hidden="true"></i>
+      </button>
+      <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out px-5 sm:px-6">
+        <div class="pb-5 sm:pb-6 text-sm sm:text-base text-muted-foreground leading-relaxed pl-11.5 border-t border-white/5 pt-3">
+          Atualmente o foco é Pix, para manter rapidez, confirmação instantânea e total segurança nas compras.
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 5 -->
+    <div class="faq-item group rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.05]">
+      <button
+        type="button"
+        onclick="toggleFaq(this)"
+        class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-semibold text-base sm:text-lg text-foreground focus-visible:outline-none"
+      >
+        <span class="flex items-center gap-3.5">
+          <span class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+            <i class="ph ph-headset size-5" aria-hidden="true"></i>
+          </span>
+          Como entro em contato com o suporte?
+        </span>
+        <i class="ph ph-caret-down size-5 text-muted-foreground transition-transform duration-300 group-hover:text-primary faq-icon" aria-hidden="true"></i>
+      </button>
+      <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out px-5 sm:px-6">
+        <div class="pb-5 sm:pb-6 text-sm sm:text-base text-muted-foreground leading-relaxed pl-11.5 border-t border-white/5 pt-3">
+          O atendimento é feito através da nossa central de suporte oficial. Nossa equipe está pronta para te atender e tirar qualquer dúvida!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const icon = item.querySelector('.faq-icon');
+    const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+
+    // Fecha outros abertos para ficar organizado
+    document.querySelectorAll('.faq-answer').forEach(el => {
+      el.style.maxHeight = null;
+    });
+    document.querySelectorAll('.faq-icon').forEach(el => {
+      el.classList.remove('rotate-180');
+    });
+
+    if (!isOpen) {
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+      icon.classList.add('rotate-180');
+      item.classList.add('border-primary/50');
+    } else {
+      item.classList.remove('border-primary/50');
+    }
+  }
+</script>

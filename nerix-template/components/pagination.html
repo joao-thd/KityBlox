@@ -1,0 +1,53 @@
+<% if meta and meta.last_page and meta.last_page > 1 %>
+  <% assign current_page = meta.current_page %>
+  <% assign last_page = meta.last_page %>
+  <% assign startPage = current_page | minus: 2 %>
+  <% if startPage < 1 %><% assign startPage = 1 %><% endif %>
+  <% assign endPage = current_page | plus: 2 %>
+  <% if endPage > last_page %><% assign endPage = last_page %><% endif %>
+
+  <nav class="mt-8" aria-label="Paginação">
+    <div class="flex items-center justify-center gap-2">
+      <% if current_page > 1 %>
+        <a href="?page=<%= current_page | minus: 1 %>" rel="prev" aria-label="Página anterior" class="btn-outline h-8 w-8 p-0 flex items-center justify-center">
+          <i class="ph ph-caret-left size-4" aria-hidden="true"></i>
+        </a>
+      <% endif %>
+
+      <% if startPage > 1 %>
+        <a href="?page=1" class="btn-outline h-8 w-8 p-0 flex items-center justify-center text-xs">1</a>
+        <% if startPage > 2 %>
+          <span class="text-muted-foreground text-xs" aria-hidden="true">...</span>
+        <% endif %>
+      <% endif %>
+
+      <% for i in (startPage..endPage) %>
+        <% if i == current_page %>
+          <span class="btn-primary h-8 w-8 p-0 flex items-center justify-center text-xs" aria-current="page"><%= i %></span>
+        <% else %>
+          <a href="?page=<%= i %>" class="btn-outline h-8 w-8 p-0 flex items-center justify-center text-xs"><%= i %></a>
+        <% endif %>
+      <% endfor %>
+
+      <% if endPage < last_page %>
+        <% if endPage < last_page | minus: 1 %>
+          <span class="text-muted-foreground text-xs" aria-hidden="true">...</span>
+        <% endif %>
+        <a href="?page=<%= last_page %>" class="btn-outline h-8 w-8 p-0 flex items-center justify-center text-xs"><%= last_page %></a>
+      <% endif %>
+
+      <% if current_page < last_page %>
+        <a href="?page=<%= current_page | plus: 1 %>" rel="next" aria-label="Próxima página" class="btn-outline h-8 w-8 p-0 flex items-center justify-center">
+          <i class="ph ph-caret-right size-4" aria-hidden="true"></i>
+        </a>
+      <% endif %>
+    </div>
+
+    <p class="text-center text-xs text-muted-foreground mt-4">
+      Página <%= current_page %> de <%= last_page %>
+      (<%= meta.total %> <% if label %><%= label %><% else %>resultado<% endif %><% if meta.total != 1 %>s<% endif %>)
+    </p>
+  </nav>
+<% endif %>
+
+

@@ -1,0 +1,405 @@
+<div class="max-w-3xl mx-auto py-4 sm:py-8 px-2 sm:px-4 space-y-8">
+  <!-- Stepper Header -->
+  <div class="flex items-center justify-between max-w-2xl mx-auto mb-6 sm:mb-10 text-[10px] sm:text-xs font-semibold text-muted-foreground relative px-2">
+    <div class="flex flex-col items-center gap-1 z-10">
+      <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#FF69B4] text-white flex items-center justify-center shadow-[0_0_15px_rgba(232,62,140,0.5)] font-bold text-xs sm:text-sm">
+        <i class="ph ph-coins text-sm sm:text-base" aria-hidden="true"></i>
+      </div>
+      <span class="text-[#E83E8C] font-bold tracking-wider">ROBUX</span>
+    </div>
+    <div class="flex-1 h-0.5 bg-white/10 mx-1 sm:mx-2"></div>
+    <div class="flex flex-col items-center gap-1 z-10 opacity-60">
+      <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/15 flex items-center justify-center font-bold text-xs">2</div>
+      <span class="tracking-wider">CONTA</span>
+    </div>
+    <div class="flex-1 h-0.5 bg-white/10 mx-1 sm:mx-2"></div>
+    <div class="flex flex-col items-center gap-1 z-10 opacity-60">
+      <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/15 flex items-center justify-center font-bold text-xs">3</div>
+      <span class="tracking-wider">GAMEPASS</span>
+    </div>
+    <div class="flex-1 h-0.5 bg-white/10 mx-1 sm:mx-2"></div>
+    <div class="flex flex-col items-center gap-1 z-10 opacity-60">
+      <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/15 flex items-center justify-center font-bold text-xs">4</div>
+      <span class="tracking-wider">PAGAR</span>
+    </div>
+    <div class="flex-1 h-0.5 bg-white/10 mx-1 sm:mx-2"></div>
+    <div class="flex flex-col items-center gap-1 z-10 opacity-60">
+      <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/15 flex items-center justify-center font-bold text-xs">5</div>
+      <span class="tracking-wider">PIX</span>
+    </div>
+    <div class="flex-1 h-0.5 bg-white/10 mx-1 sm:mx-2"></div>
+    <div class="flex flex-col items-center gap-1 z-10 opacity-60">
+      <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/15 flex items-center justify-center font-bold text-xs">6</div>
+      <span class="tracking-wider">ENTREGA</span>
+    </div>
+  </div>
+
+  <!-- Title Section -->
+  <div class="text-center space-y-2">
+    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FF69B4]/15 border border-[#FF69B4]/35 text-[#E83E8C] font-bold text-xs tracking-wider uppercase shadow-[0_0_15px_rgba(232,62,140,0.2)]">
+      <i class="ph ph-coins size-4" aria-hidden="true"></i>
+      Comprar Robux
+    </span>
+    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-md">
+      Quantos Robux?
+    </h1>
+    <p class="text-[#5c3a4d] text-xs sm:text-base font-medium">
+      Digite a quantidade que deseja comprar
+    </p>
+  </div>
+
+  <!-- Main Calculator Card -->
+  <div class="rounded-2xl sm:rounded-3xl border border-[#FFB7D5] bg-[#FFF0F6]/90 backdrop-blur-xl p-4 sm:p-8 shadow-[0_20px_50px_rgba(232,62,140,0.12)] space-y-5 sm:space-y-6">
+    <!-- Big Input Box -->
+    <div class="relative flex items-center rounded-xl sm:rounded-2xl border-2 border-[#FFB7D5] bg-white px-4 py-3 sm:py-4 focus-within:border-[#FF69B4] focus-within:shadow-[0_0_25px_rgba(255,105,180,0.35)] transition-all">
+      <div class="flex items-center gap-2 text-[#E83E8C] font-black text-xl sm:text-2xl mr-3 shrink-0">
+        <i class="ph ph-coins size-6 sm:size-7" aria-hidden="true"></i>
+      </div>
+      <input
+        type="text"
+        id="robux-amount-input"
+        value="1.000"
+        oninput="handleRobuxInput(this)"
+        class="w-full bg-transparent border-0 text-[#222] font-black text-2xl sm:text-3xl tracking-tight focus:outline-none focus:ring-0 !p-0 placeholder:text-[#c58aa9]"
+        placeholder="1.000"
+      />
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-2.5">
+      <button
+        type="button"
+        onclick="selectRobuxPreset(100)"
+        class="robux-preset-btn rounded-xl border border-[#FFB7D5] bg-white text-[#222] font-bold py-2.5 sm:py-3 text-xs sm:text-sm hover:bg-[#FFF0F6] transition-all cursor-pointer text-center"
+        data-amount="100"
+      >
+        100
+      </button>
+      <button
+        type="button"
+        onclick="selectRobuxPreset(250)"
+        class="robux-preset-btn rounded-xl border border-[#FFB7D5] bg-white text-[#222] font-bold py-2.5 sm:py-3 text-xs sm:text-sm hover:bg-[#FFF0F6] transition-all cursor-pointer text-center"
+        data-amount="250"
+      >
+        250
+      </button>
+      <button
+        type="button"
+        onclick="selectRobuxPreset(500)"
+        class="robux-preset-btn rounded-xl border border-[#FFB7D5] bg-white text-[#222] font-bold py-2.5 sm:py-3 text-xs sm:text-sm hover:bg-[#FFF0F6] transition-all cursor-pointer text-center"
+        data-amount="500"
+      >
+        500
+      </button>
+      <button
+        type="button"
+        onclick="selectRobuxPreset(1000)"
+        class="robux-preset-btn active rounded-xl border border-[#FF69B4] bg-[#FF69B4]/15 text-[#E83E8C] font-bold py-2.5 sm:py-3 text-xs sm:text-sm hover:bg-[#FF69B4]/25 transition-all cursor-pointer text-center shadow-[0_0_12px_rgba(255,105,180,0.35)]"
+        data-amount="1000"
+      >
+        1.000
+      </button>
+      <button
+        type="button"
+        onclick="selectRobuxPreset(2000)"
+        class="robux-preset-btn rounded-xl border border-[#FFB7D5] bg-white text-[#222] font-bold py-2.5 sm:py-3 text-xs sm:text-sm hover:bg-[#FFF0F6] transition-all cursor-pointer text-center"
+        data-amount="2000"
+      >
+        2.000
+      </button>
+      <button
+        type="button"
+        onclick="selectRobuxPreset(5000)"
+        class="robux-preset-btn rounded-xl border border-[#FFB7D5] bg-white text-[#222] font-bold py-2.5 sm:py-3 text-xs sm:text-sm hover:bg-[#FFF0F6] transition-all cursor-pointer text-center"
+        data-amount="5000"
+      >
+        5.000
+      </button>
+    </div>
+
+    <!-- Gamepass Calculation Info Box -->
+    <div class="rounded-xl border border-[#FFB7D5] bg-white/70 p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+        <span class="text-[11px] sm:text-xs font-bold text-[#E83E8C] uppercase tracking-wider">Valor da Gamepass a criar:</span>
+        <span id="robux-gamepass-value" class="text-base sm:text-lg font-black text-white drop-shadow">1.429 Robux</span>
+      </div>
+      <p class="text-xs text-[#5c3a4d]">
+        Após a taxa de 30% do Roblox, você recebe <span id="robux-receive-value" class="font-black text-[#E83E8C]">1.000</span>
+      </p>
+    </div>
+
+    <!-- Price Comparison Box -->
+    <div class="rounded-2xl border border-[#FFB7D5] bg-white p-4 sm:p-5 space-y-4">
+      <div class="flex items-center justify-between relative pb-3.5 border-b border-[#FFD9EC]">
+        <div>
+          <span class="block text-[11px] sm:text-xs font-bold text-[#c58aa9] uppercase mb-1">No Roblox</span>
+          <span id="roblox-official-price" class="text-base sm:text-xl font-bold text-[#c58aa9] line-through">R$ 68,00</span>
+        </div>
+
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#FFF0F6] border border-[#FFB7D5] flex items-center justify-center text-[#E83E8C]">
+          <i class="ph ph-arrow-right size-3.5 sm:size-4" aria-hidden="true"></i>
+        </div>
+
+        <div class="text-right">
+          <div class="flex items-center justify-end gap-1.5 mb-1">
+            <span class="text-[11px] sm:text-xs font-bold text-[#c58aa9] uppercase">AQUI</span>
+            <span id="robux-discount-badge" class="px-2 py-0.5 rounded-full bg-[#FF69B4]/20 border border-[#FF69B4]/45 text-[#E83E8C] text-[10px] sm:text-[11px] font-black tracking-wider">
+              15% OFF
+            </span>
+          </div>
+          <span id="our-store-price" class="text-xl sm:text-3xl font-black text-[#E83E8C] drop-shadow">R$ 59,90</span>
+        </div>
+      </div>
+
+      <!-- Savings & Unit rate -->
+      <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-[#5c3a4d] gap-2">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[#c58aa9]">Você economiza:</span>
+          <span id="robux-savings-value" class="font-black text-emerald-400 text-sm">R$ 8,10</span>
+        </div>
+        <div>
+          <span class="text-[#c58aa9]">Preço unitário:</span>
+          <span id="robux-unit-rate" class="font-bold text-[#222] ml-1">R$ 59,90 / 1.000 Robux</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue CTA Button -->
+    <button
+      type="button"
+      id="robux-submit-btn"
+      onclick="proceedRobuxPurchase()"
+      class="w-full h-13 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#FF69B4] via-[#F04FA0] to-[#E83E8C] hover:from-[#F04FA0] hover:to-[#D6336C] text-white font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-[0_10px_30px_rgba(232,62,140,0.4)] transition-all active:scale-[0.98] cursor-pointer"
+    >
+      <span>Continuar</span>
+      <i class="ph ph-arrow-right size-5" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Tutorial Section (Video + Passo a Passo) -->
+  <div class="rounded-2xl sm:rounded-3xl border border-[#FFB7D5] bg-[#FFF0F6]/90 backdrop-blur-xl p-5 sm:p-8 shadow-[0_20px_50px_rgba(232,62,140,0.12)] space-y-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#FFD9EC] pb-4">
+      <div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-400 font-bold text-xs uppercase mb-1">
+          <i class="ph ph-info size-3.5" aria-hidden="true"></i>
+          Tutorial Rápido
+        </span>
+        <h2 class="text-lg sm:text-2xl font-black text-[#222]">
+          Não sabe como criar gamepass? Aqui está!
+        </h2>
+      </div>
+      <span class="text-xs text-[#c58aa9] hidden sm:inline">Vídeo + Passo a Passo</span>
+    </div>
+
+    <!-- Embedded YouTube Player (sem título, sem marca visível, apenas play/pause) -->
+    <div class="relative w-full overflow-hidden rounded-xl sm:rounded-2xl border border-[#FFB7D5] bg-white shadow-[0_10px_30px_rgba(232,62,140,0.15)]" style="padding-top: 56.25%;">
+      <iframe
+        class="absolute top-0 left-0 w-full h-full"
+        src="https://www.youtube-nocookie.com/embed/B-LQU3J24pI?controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=0&disablekb=1&playsinline=1&cc_load_policy=0&color=white&enablejsapi=0"
+        frameborder="0"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+      ></iframe>
+    </div>
+
+    <!-- Written Step-by-Step Tutorial -->
+    <div class="space-y-3 pt-2">
+      <h3 class="text-sm sm:text-base font-bold text-[#222] flex items-center gap-2">
+        <i class="ph ph-list-numbers text-[#E83E8C] size-5" aria-hidden="true"></i>
+        Passo a Passo por escrito:
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-[#5c3a4d]">
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-[#FFD9EC]">
+          <span class="w-6 h-6 rounded-full bg-[#FF69B4] text-white font-bold text-xs flex items-center justify-center shrink-0">1</span>
+          <p><strong class="text-[#222]">Acesse o Roblox:</strong> Vá em <a href="https://create.roblox.com" target="_blank" rel="noopener" class="text-[#E83E8C] underline hover:text-[#D6336C]">create.roblox.com</a> (ou no menu Criar do Roblox).</p>
+        </div>
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-[#FFD9EC]">
+          <span class="w-6 h-6 rounded-full bg-[#FF69B4] text-white font-bold text-xs flex items-center justify-center shrink-0">2</span>
+          <p><strong class="text-white">Selecione seu Jogo:</strong> Vá em <strong>Criações (Creations)</strong> e clique na sua experiência pública padrão.</p>
+        </div>
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-[#FFD9EC]">
+          <span class="w-6 h-6 rounded-full bg-[#FF69B4] text-white font-bold text-xs flex items-center justify-center shrink-0">3</span>
+          <p><strong class="text-white">Itens Associados:</strong> No menu lateral, clique em <strong>Itens Associados (Associated Items)</strong> e selecione a aba <strong>Passes</strong>.</p>
+        </div>
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-[#FFD9EC]">
+          <span class="w-6 h-6 rounded-full bg-[#FF69B4] text-white font-bold text-xs flex items-center justify-center shrink-0">4</span>
+          <p><strong class="text-white">Criar Passe:</strong> Clique no botão <strong>Criar um Passe (Create a Pass)</strong>, insira um nome e confirme.</p>
+        </div>
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-[#FFD9EC] sm:col-span-2">
+          <span class="w-6 h-6 rounded-full bg-[#FF69B4] text-white font-bold text-xs flex items-center justify-center shrink-0">5</span>
+          <p><strong class="text-white">Colocar à Venda:</strong> Abra o passe criado, vá na aba <strong>Vendas (Sales)</strong>, marque a opção <strong>Item à Venda</strong> e coloque exatamente o <strong>"Valor da Gamepass a criar"</strong> calculado acima.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Rate: 1.000 Robux = R$ 59,90 (R$ 0,0599 por Robux)
+  const STORE_RATE_PER_1000 = 59.90;
+  const ROBLOX_RATE_PER_1000 = 68.00;
+
+  // Worker da Cloudflare: devolve o produto Nerix da quantidade (cria se não existir)
+  // e calcula o preço no servidor. A chave da API fica só no worker.
+  const ROBUX_WORKER_URL = 'https://legas-robux.patonalta2.workers.dev/robux';
+  const ROBUX_MIN = 50;
+  const ROBUX_MAX = 200000;
+
+  function isValidRobuxAmount(amount) {
+    return Number.isInteger(amount) && amount >= ROBUX_MIN && amount <= ROBUX_MAX;
+  }
+
+  function setRobuxError(message) {
+    let el = document.getElementById('robux-error');
+    if (!el) {
+      el = document.createElement('p');
+      el.id = 'robux-error';
+      el.className = 'text-center text-sm font-semibold text-[#D6336C]';
+      document.getElementById('robux-submit-btn').insertAdjacentElement('beforebegin', el);
+    }
+    el.textContent = message || '';
+    el.hidden = !message;
+  }
+
+  let currentRobuxAmount = 1000;
+
+  function formatNumber(num) {
+    return Number(num).toLocaleString('pt-BR');
+  }
+
+  function formatCurrency(val) {
+    return Number(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function updateRobuxCalculator(amount) {
+    currentRobuxAmount = Math.max(ROBUX_MIN, Math.floor(amount) || ROBUX_MIN);
+    setRobuxError(isValidRobuxAmount(currentRobuxAmount) ? '' : `Escolha de ${ROBUX_MIN} até ${formatNumber(ROBUX_MAX)} Robux.`);
+
+    // Calculate gamepass price with 30% tax compensation: amount / 0.70
+    const gamepassValue = Math.ceil(currentRobuxAmount / 0.70);
+    // Mesmo arredondamento do worker (centavos)
+    const storePrice = Math.round(currentRobuxAmount * 5.99) / 100;
+    const robloxPrice = (currentRobuxAmount / 1000) * ROBLOX_RATE_PER_1000;
+    const savings = Math.max(0, robloxPrice - storePrice);
+    const discountPct = Math.round(((robloxPrice - storePrice) / robloxPrice) * 100);
+
+    const gpEl = document.getElementById('robux-gamepass-value');
+    const recEl = document.getElementById('robux-receive-value');
+    const rbxEl = document.getElementById('roblox-official-price');
+    const ourEl = document.getElementById('our-store-price');
+    const savEl = document.getElementById('robux-savings-value');
+    const discEl = document.getElementById('robux-discount-badge');
+    const unitEl = document.getElementById('robux-unit-rate');
+
+    if (gpEl) gpEl.innerText = formatNumber(gamepassValue) + ' Robux';
+    if (recEl) recEl.innerText = formatNumber(currentRobuxAmount);
+    if (rbxEl) rbxEl.innerText = formatCurrency(robloxPrice);
+    if (ourEl) ourEl.innerText = formatCurrency(storePrice);
+    if (savEl) savEl.innerText = formatCurrency(savings);
+    if (discEl) discEl.innerText = (discountPct > 0 ? discountPct : 15) + '% OFF';
+    if (unitEl) unitEl.innerText = `${formatCurrency(storePrice)} / ${formatNumber(currentRobuxAmount)} Robux`;
+  }
+
+  function selectRobuxPreset(amount) {
+    const input = document.getElementById('robux-amount-input');
+    if (input) input.value = formatNumber(amount);
+
+    document.querySelectorAll('.robux-preset-btn').forEach(btn => {
+      if (Number(btn.getAttribute('data-amount')) === amount) {
+        btn.classList.add('border-[#FF69B4]', 'bg-[#FF69B4]/15', 'shadow-[0_0_12px_rgba(255,105,180,0.35)]', 'text-[#E83E8C]');
+        btn.classList.remove('border-[#FFB7D5]', 'bg-white', 'text-[#222]');
+      } else {
+        btn.classList.remove('border-[#FF69B4]', 'bg-[#FF69B4]/15', 'shadow-[0_0_12px_rgba(255,105,180,0.35)]', 'text-[#E83E8C]');
+        btn.classList.add('border-[#FFB7D5]', 'bg-white', 'text-[#222]');
+      }
+    });
+
+    updateRobuxCalculator(amount);
+  }
+
+  function handleRobuxInput(el) {
+    let clean = el.value.replace(/\D/g, '');
+    let num = parseInt(clean, 10) || 0;
+    if (num > ROBUX_MAX) num = ROBUX_MAX;
+
+    el.value = num > 0 ? formatNumber(num) : '';
+
+    document.querySelectorAll('.robux-preset-btn').forEach(btn => {
+      if (Number(btn.getAttribute('data-amount')) === num) {
+        btn.classList.add('border-[#FF69B4]', 'bg-[#FF69B4]/15', 'shadow-[0_0_12px_rgba(255,105,180,0.35)]', 'text-[#E83E8C]');
+        btn.classList.remove('border-[#FFB7D5]', 'bg-white', 'text-[#222]');
+      } else {
+        btn.classList.remove('border-[#FF69B4]', 'bg-[#FF69B4]/15', 'shadow-[0_0_12px_rgba(255,105,180,0.35)]', 'text-[#E83E8C]');
+        btn.classList.add('border-[#FFB7D5]', 'bg-white', 'text-[#222]');
+      }
+    });
+
+    if (num >= ROBUX_MIN) {
+      updateRobuxCalculator(num);
+    } else {
+      setRobuxError(num > 0 ? `O mínimo é ${ROBUX_MIN} Robux.` : '');
+    }
+  }
+
+  // Ao sair do campo, ajusta só se estiver fora dos limites.
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('robux-amount-input');
+    if (!input) return;
+    input.addEventListener('blur', () => {
+      const num = parseInt(input.value.replace(/\D/g, ''), 10) || 0;
+      if (isValidRobuxAmount(num)) return;
+      selectRobuxPreset(Math.min(ROBUX_MAX, Math.max(ROBUX_MIN, num)));
+    });
+  });
+
+  async function proceedRobuxPurchase() {
+    const amount = currentRobuxAmount || 1000;
+    if (!isValidRobuxAmount(amount)) {
+      setRobuxError(`Escolha de ${ROBUX_MIN} até ${formatNumber(ROBUX_MAX)} Robux.`);
+      return;
+    }
+
+    const btn = document.getElementById('robux-submit-btn');
+    const label = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span>Preparando pedido...</span>';
+    }
+    setRobuxError('');
+
+    try {
+      const res = await fetch(ROBUX_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.id) throw new Error(data.error || 'Não foi possível preparar o pedido.');
+
+      const gamepassValue = Math.ceil(amount / 0.70);
+      if (typeof addToCart !== 'function') throw new Error('Carrinho indisponível. Recarregue a página.');
+      addToCart({
+        packageId: data.id,
+        quantity: 1,
+        fields: {
+          'Quantidade de Robux': `${formatNumber(amount)} Robux`,
+          'Valor da Gamepass no Roblox': `${formatNumber(gamepassValue)} Robux`
+        }
+      });
+      setTimeout(() => {
+        if (typeof openCart === 'function') openCart();
+        else window.location.href = '/checkout';
+      }, 300);
+    } catch (err) {
+      setRobuxError(err.message || 'Não foi possível preparar o pedido. Tente novamente.');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = label;
+      }
+    }
+  }
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', () => {
+    updateRobuxCalculator(1000);
+  });
+</script>

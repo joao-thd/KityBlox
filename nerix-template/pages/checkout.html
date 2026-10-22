@@ -1,0 +1,339 @@
+<% layout "layouts/layout", scripts: 'https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js, /scripts/custom-fields.js, /scripts/checkout.js', page_title: 'Carrinho' %>
+
+<% load "checkout_fields" %>
+
+<script id="__nerix_checkout_fields" type="application/json"><%= checkout_fields | json %></script>
+
+<section id="checkout" class="legas-checkout container mx-auto max-w-screen-lg py-8">
+  <div>
+    <div class="legas-co-top">
+      <a href="/" class="legas-co-back"><i class="ph ph-caret-left" aria-hidden="true"></i> Voltar à loja</a>
+
+      <ol class="legas-co-steps">
+        <li class="done"><i class="ph ph-check-circle" aria-hidden="true"></i> Carrinho</li>
+        <li class="now"><i class="ph ph-credit-card" aria-hidden="true"></i> Pagamento</li>
+        <li><i class="ph ph-gift" aria-hidden="true"></i> Recebimento</li>
+      </ol>
+
+      <span class="legas-co-safe"><i class="ph ph-shield-check" aria-hidden="true"></i> Compra segura</span>
+    </div>
+
+    <div class="legas-co-hero">
+      <h1>Falta pouco para você <em>jogar</em>!</h1>
+      <p>Pague com Pix, a confirmação sai em segundos e a entrega começa na hora.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 min-h-[60vh]">
+      <div class="legas-co-col space-y-6">
+        <% if gateways and gateways.size > 0 %>
+        <div class="rounded-cc border border-foreground/10 bg-muted/60 overflow-hidden">
+          <div class="flex items-center gap-3 border-b border-foreground/10 px-5 py-4">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary text-xs font-bold">2</span>
+            <h2 class="font-semibold text-base tracking-tight">Forma de pagamento</h2>
+          </div>
+          <div class="p-4 grid gap-2.5 grid-cols-1">
+          <% for gateway in gateways %>
+            <button
+              type="button"
+              data-payment-method="<%= gateway.name %>"
+              data-require-document="<%= gateway.require_document %>"
+              data-require-phone="<%= gateway.require_phone %>"
+              data-fee="<%= gateway.fee %>"
+              data-fee-type="<%= gateway.fee_type %>"
+              data-fixed-fee="<%= gateway.fixed_fee %>"
+              data-fee-rates='<%= gateway.fee_rates_json %>'
+              data-is-percentage-fee="<%= gateway.is_percentage_fee %>"
+              <% if gateway.provider %>
+              data-provider="<%= gateway.provider %>"
+              <% endif %>
+              <% if gateway.name == "CREDITCARD" %>
+              data-payee-code="<%= gateway.payee_code %>"
+              data-public-key="<%= gateway.public_key %>"
+              data-sdk-url="<%= gateway.sdk_url %>"
+              data-sdk-global="<%= gateway.sdk_global %>"
+              data-card-token-prefix="<%= gateway.card_token_prefix %>"
+              data-wallet-card-provider="<%= gateway.wallet_card_provider %>"
+              data-max-installments="<%= gateway.max_installments %>"
+              <% endif %>
+              class="group relative w-full text-start rounded-cc border-2 cursor-pointer transition-all duration-150 bg-muted/80 text-foreground border-foreground/10 hover:border-foreground/20 hover:bg-muted data-[selected=true]:border-primary data-[selected=true]:bg-primary/[0.06] data-[selected=true]:shadow-[0_0_0_1px_hsl(var(--primary)/0.25)]"
+            >
+              <div class="absolute top-4 right-4 size-4 rounded-full border-2 border-foreground/25 group-data-[selected=true]:border-primary flex items-center justify-center transition-all duration-150">
+                <div class="size-2 rounded-full bg-primary scale-0 group-data-[selected=true]:scale-100 transition-transform duration-150"></div>
+              </div>
+              <div class="p-4 pr-10 flex items-center gap-3">
+                <div class="<% if gateway.name == 'PIX' %>bg-white<% else %>bg-background<% endif %> size-12 shrink-0 rounded-xl border border-foreground/10 flex items-center justify-center transition-colors group-data-[selected=true]:border-primary/40">
+                  <% if gateway.name == "PIX" %>
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@9/icons/pix.svg" alt="Pix" class="size-6 opacity-90" />
+                  <% elsif gateway.name == "LITECOIN" %>
+                    <span class="text-2xl font-bold text-primary" aria-label="Litecoin">Ł</span>
+                  <% else %>
+                    <i class="ph ph-credit-card size-6 text-primary" aria-hidden="true"></i>
+                  <% endif %>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sm leading-tight"><% if gateway.name == "STRIPE" %>Cartao de credito<% else %><%= gateway.display %><% endif %></p>
+                  <p class="mt-1 text-xs text-muted-foreground">
+                    <% if gateway.name == "STRIPE" %>Pagamento seguro com cartao de credito<% elsif gateway.name == "LITECOIN" %>Pague em LTC pela rede Litecoin<% else %>Aprovacao imediata<% endif %>
+                    <% if gateway.fee and gateway.fee > 0 %>
+                      <span class="font-medium text-primary"> · <% if gateway.is_percentage_fee %>+<%= gateway.fee %>% de taxa<% else %>+<%= gateway.fee | format_price %> de taxa<% endif %></span>
+                    <% endif %>
+                  </p>
+                </div>
+              </div>
+            </button>
+          <% endfor %>
+          </div>
+        </div>
+        <% endif %>
+        <div id="creditcard-form" class="hidden bg-muted rounded-cc border h-fit backdrop-blur-sm">
+          <div class="border-b p-4">
+            <h4 class="text-lg font-semibold">Dados do cartao</h4>
+          </div>
+          <div class="p-4 space-y-2">
+            <div id="wallet-card-element" class="hidden min-h-[48px] rounded border border-foreground/15 bg-background p-2"></div>
+            <div class="relative">
+              <input type="text" name="card_number" placeholder="Numero do cartao" class="w-full h-10 pr-12" autocomplete="cc-number" inputmode="numeric" />
+              <div id="card-brand-icon" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" name="card_expiry" placeholder="MM/AA" class="w-full h-10" autocomplete="cc-exp" inputmode="numeric" />
+              <input type="text" name="card_cvv" placeholder="CVV" class="w-full h-10" autocomplete="cc-csc" inputmode="numeric" />
+            </div>
+            <input type="text" name="card_holder" placeholder="Nome do titular do cartao" class="w-full h-10" autocomplete="cc-name" />
+            <div id="installments-container" class="hidden">
+              <select name="card_installments" class="w-full h-10">
+                <option value="1">1x (a vista)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="legas-co-contact bg-muted rounded-cc border h-fit backdrop-blur-sm">
+          <div class="flex items-center gap-3 border-b border-foreground/10 px-5 py-4">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary text-xs font-bold">1</span>
+            <div>
+              <h4 class="font-semibold text-lg leading-tight">Seus dados</h4>
+              <p class="text-xs text-muted-foreground">É para lá que enviamos a compra</p>
+            </div>
+          </div>
+          <div class="legas-co-grid p-5" id="personal-info">
+            <% if discord.enabled %>
+              <input value="<%= user.discord_id %>" type="text" name="client_discord" class="w-full h-10" hidden />
+
+              <button 
+                id="discord-login" 
+                class="btn-primary h-10 mb-4 font-medium bg-[#5865F2] w-full text-foreground"
+                type="button"
+                onclick="Nerix.requestDiscord('/checkout')"
+              >
+                <% if user.discord_id %>
+                  <img src="<%= user.avatar %>" alt="Discord" class="size-6 rounded-full" />
+                  <span><%= user.name %></span>
+                <% else %>
+                  <i class="ph ph-discord-logo size-5 text-white" aria-hidden="true"></i>
+
+                  Entrar com o Discord
+                  <% if discord.optional %>
+                    (opcional)
+                  <% endif %>
+                <% endif %>
+              </button>
+            <% endif %>
+
+            <div class="legas-co-field">
+              <label class="legas-co-label" for="checkout-client-name">Nome completo</label>
+              <input id="checkout-client-name" type="text" name="client_name" placeholder="Digite seu nome" class="w-full" autocomplete="name" />
+            </div>
+            <div class="legas-co-field">
+              <label class="legas-co-label" for="checkout-client-email">E-mail</label>
+              <input id="checkout-client-email" type="text" name="client_email" placeholder="seu@email.com" class="w-full" autocomplete="email" />
+            </div>
+            <input 
+              type="text" 
+              name="client_document" 
+              placeholder="CPF" 
+              class="hidden w-full h-10" 
+              data-required="<% if store.require_document %>true<% else %>false<% endif %>"
+            />
+
+            <div
+              id="phone-field-wrapper"
+              class="hidden"
+              data-phone-mode="<%= store.phone_mode %>"
+            >
+              <input type="tel" name="client_phone" placeholder="Telefone" class="w-full h-10" inputmode="tel" />
+            </div>
+          </div>
+
+          <div id="checkout_fields" class="p-4 space-y-2 hidden"></div>
+        </div>
+
+        <div
+          id="address-section"
+          class="bg-muted rounded-cc border h-fit backdrop-blur-sm <% if store.require_address %>block<% else %>hidden<% endif %>"
+          data-require-address="<% if store.require_address %>true<% else %>false<% endif %>"
+        >
+          <div class="border-b p-4">
+            <h4 class="font-semibold text-lg">Endereco</h4>
+          </div>
+          <div class="p-4 space-y-2" id="address-fields">
+            <div class="flex gap-2">
+              <div class="relative flex-1">
+                <input
+                  type="text"
+                  name="address_cep"
+                  placeholder="CEP"
+                  class="w-full h-10 pr-10"
+                  inputmode="numeric"
+                  maxlength="9"
+                />
+                <div id="cep-loading" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden">
+                  <i class="ph ph-spinner animate-spin size-4 text-muted-foreground" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <input type="text" name="address_street" placeholder="Rua" class="col-span-2 w-full h-10" />
+              <input type="text" name="address_number" placeholder="Numero" class="w-full h-10" />
+            </div>
+            <input type="text" name="address_complement" placeholder="Complemento (opcional)" class="w-full h-10" />
+            <input type="text" name="address_neighborhood" placeholder="Bairro" class="w-full h-10" />
+            <div class="grid grid-cols-3 gap-2">
+              <input type="text" name="address_city" placeholder="Cidade" class="col-span-2 w-full h-10" />
+              <input type="text" name="address_state" placeholder="UF" class="w-full h-10" maxlength="2" />
+            </div>
+            <span class="text-red-500 text-xs" id="cep-error"></span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="relative z-[1] flex items-start gap-2 py-0.5 text-xs leading-snug text-muted-foreground">
+            <input
+              id="terms-checkbox"
+              type="checkbox"
+              name="terms_accepted"
+              class="mt-0.5 size-3.5 shrink-0 cursor-pointer rounded border border-white/25 bg-background accent-primary"
+            />
+            <p class="m-0 min-w-0 pt-px">
+              <label for="terms-checkbox" class="cursor-pointer select-none">Eu aceito os</label>
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mx-0.5 font-medium text-foreground underline underline-offset-2"
+                >termos e condicoes</a>
+              <label for="terms-checkbox" class="cursor-pointer select-none"> desta compra.</label>
+            </p>
+          </div>
+
+          <button
+            id="pay-button"
+            class="legas-buy legas-co-pay h-14 px-6 w-full text-base justify-center gap-3"
+            type="submit"
+          >
+            <i class="ph ph-lock-key" aria-hidden="true"></i>
+            <span>Pagar com segurança</span>
+            <span id="pay-button-price" class="tabular-nums font-black"><%= 0 | format_price %></span>
+          </button>
+
+          <div class="legas-co-trust">
+            <span><i class="ph ph-lock-simple" aria-hidden="true"></i> Site seguro (SSL)</span>
+            <span><i class="ph ph-lightning" aria-hidden="true"></i> Entrega rápida</span>
+            <span><i class="ph ph-headset" aria-hidden="true"></i> Suporte no chat</span>
+          </div>
+        </div>
+      </div>
+      <div class="legas-co-summary md:sticky md:top-[calc(theme(spacing.4)+80px)] self-start rounded-cc border h-fit backdrop-blur-sm">
+        <div class="border-b border-white/10 p-4 flex items-center justify-between">
+          <h4 class="font-semibold text-lg text-foreground">Resumo do pedido</h4>
+          
+          <div class="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 rounded-full px-2 py-1 text-xs font-medium">
+            <i class="ph ph-lock size-4" aria-hidden="true"></i> Pagamento seguro
+          </div>
+        </div>
+        <div class="p-4 space-y-4">
+          <div id="packages-list">
+            <div id="empty-packages" class="text-sm text-muted-foreground py-2">Seu carrinho esta vazio.</div>
+          </div>
+
+          <div id="checkout-cart-goal" class="hidden rounded-cc border border-white/10 bg-white/[0.03] p-4 text-sm text-foreground transition-colors"></div>
+          <div id="checkout-order-bumps" class="hidden space-y-2"></div>
+
+          <div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] w-full"></div>
+          <div id="coupon">
+            <div class="flex gap-3 h-10">
+              <input class="w-full h-full" placeholder="Digite seu cupom de desconto" />
+              <button
+                class="btn-primary h-full px-5 group"
+                type="button"
+                data-state="apply"
+              >
+                <i class="ph ph-ticket size-5" aria-hidden="true"></i>
+                <span class="group-data-[state=apply]:block group-data-[state=remove]:hidden">Aplicar</span>
+                <span class="group-data-[state=apply]:hidden group-data-[state=remove]:block">Remover</span>
+              </button>
+            </div>
+            <span class="text-red-500 text-sm" id="coupon-error"></span>
+          </div>
+          <div id="loyalty-credit-toggle" class="hidden items-center justify-between gap-3 rounded-md border border-emerald-500/20 bg-emerald-500/[0.06] px-3 py-3">
+            <label for="loyalty-credit-checkbox" class="flex flex-1 items-center gap-2.5 text-sm cursor-pointer">
+              <input id="loyalty-credit-checkbox" type="checkbox" class="size-4 rounded accent-primary cursor-pointer shrink-0" />
+              <span class="font-medium text-foreground">Usar meu saldo <span class="font-semibold text-emerald-400">(<span id="loyalty-credit-available"></span> disponível)</span></span>
+            </label>
+          </div>
+          <div class="bg-border h-[1px] w-full"></div>
+          <ul class="space-y-2.5 pt-1 text-sm" id="pricing">
+            <li class="flex items-center justify-between gap-4">
+              <span class="text-muted-foreground">Subtotal</span>
+              <span class="subtotal-value font-medium tabular-nums text-foreground"><%= 0 | format_price %></span>
+            </li>
+            <li class="flex items-center justify-between gap-4">
+              <span class="text-muted-foreground">Descontos</span>
+              <span class="discount-value font-medium tabular-nums text-foreground"><%= 0 | format_price %></span>
+            </li>
+            <li
+              id="progressive-discount-row"
+              class="hidden flex items-center justify-between gap-4 rounded-md border border-emerald-500/20 bg-emerald-500/[0.06] px-2.5 py-2 text-sm"
+            >
+              <span class="text-muted-foreground">Meta premiada</span>
+              <span class="progressive-discount-value font-semibold tabular-nums text-emerald-400"><%= 0 | format_price %></span>
+            </li>
+            <li class="hidden flex items-center justify-between gap-4" id="loyalty-credit-row">
+              <span class="text-muted-foreground">Saldo usado</span>
+              <span class="loyalty-credit-value font-medium tabular-nums text-emerald-400"><%= 0 | format_price %></span>
+            </li>
+            <li class="hidden flex items-center justify-between gap-4" id="fee-row">
+              <span class="text-muted-foreground">Taxa de processamento</span>
+              <span class="fee-value font-medium tabular-nums text-foreground"><%= 0 | format_price %></span>
+            </li>
+            <li
+              class="flex items-center justify-between gap-4 pt-2 mt-1 border-t border-white/10 text-base font-semibold text-foreground"
+            >
+              <span>Total</span>
+              <span class="total-value tabular-nums"><%= 0 | format_price %></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function getCheckoutItemsRender(pkgs) {
+    const html = pkgs
+      .map((package) => `<% render 'components/checkout-item' %>`)
+      .join('');
+
+    return html;
+  }
+</script>
+
+<script>
+  function getCheckoutFieldsRender(list) {
+    const container = document.getElementById('checkout_fields');
+    return (Array.isArray(list) ? list : [])
+      .map((field) => `<% render 'components/custom-field' %>`)
+      .join('');
+  }
+</script>

@@ -1,0 +1,35 @@
+<% layout "layouts/layout", scripts: '/scripts/shop-account-sidebar.js, /scripts/shop-account-loyalty.js', page_title: 'Fidelidade' %>
+
+<div class="container py-12 min-h-screen">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="lg:col-span-1">
+      <% render 'components/account-sidebar' %>
+    </div>
+
+    <div class="lg:col-span-3 space-y-6">
+      <div class="mb-6">
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap gap-x-1.5 gap-y-1 items-center">
+            <li>
+              <a href="/" class="hover:underline text-muted-foreground">Início</a>
+            </li>
+            <i class="ph ph-caret-right text-muted-foreground size-4 shrink-0" aria-hidden="true"></i>
+            <li>
+              <a href="/account/orders" class="hover:underline text-muted-foreground">Área do cliente</a>
+            </li>
+            <i class="ph ph-caret-right text-muted-foreground size-4 shrink-0" aria-hidden="true"></i>
+            <li>
+              <span class="font-semibold text-foreground">Fidelidade</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="text-2xl font-bold tracking-tight">Fidelidade</h1>
+      </div>
+
+      <div id="loyalty-dashboard-root"></div>
+    </div>
+  </div>
+</div>

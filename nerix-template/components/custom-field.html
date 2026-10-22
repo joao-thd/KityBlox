@@ -1,0 +1,58 @@
+<div
+  class="space-y-2"
+  data-field-id="${field.name}"
+  data-field-type="${field.type}"
+>
+  <% unless placeholder_mode %>
+  <label
+    for="${field.name}"
+    class="text-sm font-medium leading-none flex items-center"
+  >
+    ${field.label || field.description}${field.required ? "<span class='text-red-500 ml-1'>*</span>" : ""}
+  </label>
+  <% endunless %>
+
+  <div class="relative flex items-center w-full">
+    ${field.type === 'ROBLOX' ? `<img id="roblox-input-avatar-${field.name}" class="size-5 absolute left-2 rounded-full hidden" />` : ''}
+
+    ${field.type === 'SELECT'
+      ? `<select
+           id="${field.name}"
+           class="w-full h-10 data-[state=error]:border-red-500 focus-visible:data-[state=error]:ring-red-500"
+           data-required="${String(!!field.required)}"
+         >
+          ${(field.options || []).map((opt) => `
+            <option value="${opt.id}">
+              ${opt.label ?? opt.name}${opt.price ? ` (${Nerix.formatPrice(opt.price, store.currency)})` : ''}
+            </option>`).join('')
+          }
+         </select>`
+      : `<input
+           type="${field.type === 'WHATSAPP' ? 'tel' : field.type === 'NUMBER' && <% if store.type == 'STANDALONE' %>true<% else %>false<% endif %> ? 'number' : 'text'}"
+           ${field.type === 'NUMBER' || field.type === 'WHATSAPP' ? 'inputmode="numeric" pattern="[0-9]*"' : ''}
+           ${field.type === 'WHATSAPP' ? 'autocomplete="tel"' : ''}
+           id="${field.name}"
+           placeholder="${field.placeholder ? field.placeholder : <% if placeholder_mode %>field.description<% else %>''<% endif %>}"
+           class="w-full h-10 data-[state=error]:border-red-500 focus-visible:data-[state=error]:ring-red-500 ${field.type === 'ROBLOX' ? 'pl-8' : ''} <% if store.type != 'STANDALONE' %>${field.type === 'NUMBER' || field.type === 'WHATSAPP' ? 'number-only' : ''}<% endif %>"
+           ${typeof field.max === 'number' ? `maxlength="${field.max}"` : ''}
+           ${typeof field.min === 'number' ? `minlength="${field.min}"` : ''}
+           data-required="${String(!!field.required)}"
+         />`}
+    ${field.type === 'ROBLOX' ? `<div id="roblox-loader-${field.name}" class="absolute right-3 text-muted-foreground hidden"><i class="ph ph-spinner size-4 animate-spin" aria-hidden="true"></i></div>` : ''}
+  </div>
+
+  <p id="error-${field.name}" class="mt-1 text-xs text-red-500 hidden"></p>
+
+  ${field.type === 'ROBLOX' ? `
+  <div id="roblox-result-${field.name}" class="flex items-center justify-between gap-3 p-2 border rounded-cc bg-background hidden">
+    <div class="flex items-center gap-2 min-w-0">
+      <img id="roblox-avatar-${field.name}" class="size-8 rounded-full object-cover"/>
+      <div class="min-w-0">
+        <p id="roblox-name-${field.name}" class="text-sm font-medium truncate">&nbsp;</p>
+        <p id="roblox-username-${field.name}" class="text-xs text-muted-foreground truncate">&nbsp;</p>
+      </div>
+    </div>
+    <button id="roblox-select-${field.name}" type="button" class="btn-secondary h-8 px-3">Selecionar</button>
+  </div>
+  ` : ''}
+</div>

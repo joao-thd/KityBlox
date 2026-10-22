@@ -1,0 +1,211 @@
+<% assign top_announce = config.top_announce | replace: '[', '<span class="font-semibold bg-background px-1.5 py-0.5 rounded">' | replace: ']', '</span>' %>
+<% assign top_announce_link = config.top_announce_link %>
+<% if top_announce != blank %>
+  <a
+    id="top-announce"
+    class="text-center text-sm sm:text-base w-full bg-primary p-2 flex items-center justify-center gap-3 relative z-10"
+    <% if top_announce_link != blank %> href="<%= top_announce_link %>" <% endif %>
+  >
+    <p class="font-medium"><%= top_announce %></p>
+  </a>
+
+  <% if top_announce_link != blank %>
+  <script>
+    const top_announce_el = document.getElementById('top-announce')
+    if (top_announce_el) {
+      const target = new URL(top_announce_el.href).host === window.location.host ? '_self' : '_blank'
+      top_announce_el.setAttribute('target', target)
+    }
+  </script>
+  <% endif %>
+<% endif %>
+
+<div class="sticky z-20 top-0 pt-5 sm:pt-6 pb-2 px-4 sm:px-6 lg:px-8">
+  <header class="relative max-w-5xl xl:max-w-6xl mx-auto flex items-center border border-white/15 rounded-full bg-background/85 backdrop-blur-xl shadow-2xl px-3 sm:px-6 py-3.5 sm:py-4">
+    <% load "widget", type: "top_donators" %>
+    <div class="w-full">
+      <nav class="flex items-center justify-between sm:flex-row relative">
+        <div class="flex items-center gap-3 sm:gap-4">
+          <!-- Botão Hamburguer -->
+          <button
+            type="button"
+            onclick="toggleSidebar()"
+            aria-label="Abrir Menu"
+            class="w-10 h-10 border border-white/10 bg-white/5 hover:bg-white/10 active:scale-95 transition-all rounded-full flex items-center justify-center text-foreground shrink-0 cursor-pointer"
+          >
+            <i class="ph ph-list w-5 h-5" aria-hidden="true"></i>
+          </button>
+
+          <div class="hidden relative md:block">
+            <input
+              autocomplete="off"
+              id="search-bar"
+              class="h-10 w-[200px] lg:w-[240px] xl:w-[260px] rounded-full border border-white/10 bg-white/5 !pl-11 pr-3 text-sm transition-all placeholder:text-muted-foreground focus:border-primary/50"
+              placeholder="Buscar produto"
+            />
+            <i
+              class="ph ph-magnifying-glass pointer-events-none absolute left-3.5 top-1/2 z-10 size-4.5 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            ></i>
+
+            <div id="search-result" class="absolute top-12 left-0 w-full max-w-[280px] z-50 max-h-[400px] border bg-background border-white/10 rounded-2xl overflow-y-auto overflow-x-hidden hidden shadow-2xl">
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGO: no celular fica no fluxo entre os botões; a partir de sm flutua centralizada -->
+        <a
+          href="/"
+          title="Voltar ao início"
+          class="relative sm:absolute sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-30 flex items-center justify-center cursor-pointer group pointer-events-auto shrink-0"
+        >
+          <% if theme.logo != blank %>
+            <img
+              src="<%= theme.logo | cdn %>"
+              alt="<%= store.name %>"
+              class="w-12 h-12 sm:w-[84px] sm:h-[84px] rounded-2xl sm:rounded-3xl object-cover logo-bouncing-pulse transition-transform duration-300 group-hover:scale-105"
+            />
+          <% else %>
+            <div class="w-12 h-12 sm:w-[84px] sm:h-[84px] rounded-2xl sm:rounded-3xl bg-primary flex items-center justify-center text-2xl font-black logo-bouncing-pulse transition-transform duration-300 group-hover:scale-105">
+              <%= store.name | slice: 0, 1 %>
+            </div>
+          <% endif %>
+        </a>
+
+        <div class="flex items-center gap-4 sm:gap-6 text-sm relative z-10">
+          <!-- Links de Navegação Rápidos (Desktop) -->
+          <div class="hidden lg:flex items-center gap-5 text-sm font-semibold text-muted-foreground">
+            <a href="/#store" class="hover:text-foreground transition-colors">Catálogo</a>
+            <a href="/#faq" class="hover:text-foreground transition-colors">FAQ</a>
+            <a href="/terms" class="hover:text-foreground transition-colors">Termos</a>
+          </div>
+
+          <ul class="flex gap-2.5 sm:gap-3 items-center">
+            <li class="md:hidden">
+              <button onclick="toggleMobileSearch()" class="w-10 h-10 border border-white/10 bg-white/5 hover:bg-white/10 transition-colors rounded-full flex items-center justify-center">
+                <i class="ph ph-magnifying-glass w-5 h-5" aria-hidden="true"></i>
+              </button>
+            </li>
+            <% if store.auth %>
+              <li>
+                <% if user %>
+                  <% render 'components/profile-dropdown' %>
+                <% else %>
+                  <div id="header-auth-client-root" class="contents">
+                    <a
+                      id="header-auth-guest"
+                      href="/login"
+                      class="open-login inline-flex h-10 min-w-[2.5rem] sm:min-w-0 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 sm:px-4.5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white/10 hover:border-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      <i class="ph ph-user w-4 h-4 shrink-0 opacity-90" aria-hidden="true"></i>
+                      <span class="hidden sm:inline">Entrar</span>
+                    </a>
+                    <div id="header-auth-customer" class="relative hidden"></div>
+                  </div>
+                <% endif %>
+              </li>
+            <% endif %>
+            <li>
+              <button
+                type="button"
+                onclick="openCart()"
+                class="open-cart inline-flex h-10 min-w-[2.5rem] sm:min-w-0 items-center justify-center gap-2 rounded-full bg-primary px-3.5 sm:px-4 text-sm font-semibold text-white shadow-md transition hover:opacity-90 hover:shadow-lg active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              >
+                <i class="ph ph-shopping-cart w-4 h-4 shrink-0" aria-hidden="true"></i>
+                <span class="hidden sm:inline">Carrinho</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div id="mobile-search-container" class="relative mt-2 md:hidden hidden">
+        <input
+          autocomplete="off"
+          id="search-bar-mobile"
+          class="h-10 w-full rounded-full border-2 border-white/5 bg-white/5 !pl-11 pr-3 transition-all placeholder:text-muted-foreground"
+          placeholder="Buscar produto"
+        />
+        <i
+          class="ph ph-magnifying-glass pointer-events-none absolute left-3 top-1/2 z-10 size-5 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        ></i>
+
+        <div id="search-result-mobile" class="absolute top-12 left-0 w-full z-50 max-h-[400px] border bg-background border-white/10 rounded-xl overflow-y-auto overflow-x-hidden hidden shadow-2xl">
+        </div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<!-- Sidebar Menu (Gaveta Lateral) -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300" onclick="toggleSidebar()"></div>
+<div id="sidebar-menu" class="fixed top-0 left-0 h-full w-[280px] bg-background/95 backdrop-blur-md border-r border-white/10 z-[110] transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+  <div class="p-6 flex items-center justify-between border-b border-white/10">
+    <a href="/" class="flex items-center gap-2" onclick="toggleSidebar()">
+      <% if theme.logo != blank %>
+        <img src="<%= theme.logo | cdn %>" alt="<%= store.name %>" class="h-9 object-contain" />
+      <% else %>
+        <span class="font-bold text-lg text-foreground"><%= store.name %></span>
+      <% endif %>
+    </a>
+    <button type="button" onclick="toggleSidebar()" aria-label="Fechar Menu" class="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg hover:bg-white/10">
+      <i class="ph ph-x w-6 h-6" aria-hidden="true"></i>
+    </button>
+  </div>
+  
+  <div class="flex-1 py-6 px-4 flex flex-col gap-2 overflow-y-auto">
+    <a href="/" onclick="toggleSidebar()" class="flex items-center gap-3.5 px-4 py-3 rounded-xl hover:bg-white/5 text-foreground/90 hover:text-foreground transition-colors text-sm font-semibold">
+      <i class="ph ph-house w-5 h-5 text-primary" aria-hidden="true"></i>
+      Início
+    </a>
+    <a href="/#store" onclick="toggleSidebar()" class="flex items-center gap-3.5 px-4 py-3 rounded-xl hover:bg-white/5 text-foreground/90 hover:text-foreground transition-colors text-sm font-semibold">
+      <i class="ph ph-stack w-5 h-5 text-primary" aria-hidden="true"></i>
+      Ver Produtos
+    </a>
+    <a href="/#faq" onclick="toggleSidebar()" class="flex items-center gap-3.5 px-4 py-3 rounded-xl hover:bg-white/5 text-foreground/90 hover:text-foreground transition-colors text-sm font-semibold">
+      <i class="ph ph-chats w-5 h-5 text-primary" aria-hidden="true"></i>
+      Suporte & FAQ
+    </a>
+    <a href="/terms" onclick="toggleSidebar()" class="flex items-center gap-3.5 px-4 py-3 rounded-xl hover:bg-white/5 text-foreground/90 hover:text-foreground transition-colors text-sm font-semibold">
+      <i class="ph ph-file-text w-5 h-5 text-primary" aria-hidden="true"></i>
+      Termos de Uso
+    </a>
+  </div>
+  
+  <div class="p-6 border-t border-white/10">
+    <div class="flex gap-3 mb-6">
+      <a href="<%= store.settings.social_links.discord | default: '#' %>" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-primary/50 text-foreground transition-all">
+        <i class="ph ph-discord-logo w-5 h-5" aria-hidden="true"></i>
+      </a>
+      <a href="<%= store.settings.social_links.instagram | default: '#' %>" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-primary/50 text-foreground transition-all">
+        <i class="ph ph-instagram-logo w-5 h-5" aria-hidden="true"></i>
+      </a>
+    </div>
+    <p class="text-xs text-muted-foreground font-medium">© <%= "now" | date: "%Y" %> <%= store.name %></p>
+  </div>
+</div>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    
+    if (sidebar.classList.contains('-translate-x-full')) {
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        sidebar.classList.remove('-translate-x-full');
+      }, 10);
+      document.body.style.overflow = 'hidden';
+    } else {
+      overlay.classList.add('opacity-0');
+      sidebar.classList.add('-translate-x-full');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+      }, 300);
+      document.body.style.overflow = '';
+    }
+  }
+</script>

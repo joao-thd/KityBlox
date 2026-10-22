@@ -1,0 +1,87 @@
+<!-- Desktop Sidebar -->
+<div class="absolute -left-48 top-0 h-full hidden min-[1800px]:block">
+  <div 
+    class="sticky top-24 z-30 flex flex-col gap-1 bg-muted backdrop-blur-sm border 
+    border-foreground/10 rounded-2xl p-2 shadow-xl max-h-[80vh] overflow-auto w-48 min-w-[10rem] 
+    sidebar-categories-menu custom-scrollbar"
+  >
+    <% for category in categories %>
+      <% if category.sub_categories and category.sub_categories.size > 0 %>
+        <button
+          type="button"
+          class="group btn-secondary w-full justify-between rounded-cc px-3 py-2 text-xs font-medium border border-transparent hover:bg-primary/10 hover:border-primary/40"
+          onclick="toggleCategoryDropdown('<%= category.id %>')"
+          data-state="closed"
+        >
+          <span class="truncate"><%= category.name %></span>
+          <i class="ph ph-caret-down size-4 ml-2 flex-shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" aria-hidden="true"></i>
+        </button>
+        <div class="cat-dropdown data-[state=closed]:hidden data-[state=open]:flex flex-col w-full" data-id="<%= category.id %>" data-state="closed">
+          <div class="rounded-xl overflow-hidden bg-background/95 border border-border shadow-lg backdrop-blur-sm">
+            <% for sub in category.sub_categories %>
+              <a href="/category/<%= sub.slug %>" class="btn-ghost w-full justify-between px-4 py-1 h-8 text-xs font-medium rounded-none" title="<%= sub.name %>">
+                <span class="align-middle truncate block"><%= sub.name %></span>
+              </a>
+            <% endfor %>
+          </div>
+        </div>
+      <% else %>
+        <a href="/category/<%= category.slug %>" class="btn-secondary w-full justify-between rounded-cc px-3 py-2 text-xs font-medium border border-transparent hover:bg-primary/10 hover:border-primary/40">
+          <span class="truncate"><%= category.name %></span>
+        </a>
+      <% endif %>
+    <% endfor %>
+  </div> 
+</div>
+
+<!-- Mobile Selector -->
+<div class="min-[1800px]:hidden mb-4 sm:absolute sm:right-8 sm:z-10 sm:w-[300px]">
+  <div class="relative">
+    <!-- Mobile Toggle Button -->
+    <button
+      type="button"
+      id="mobile-category-toggle"
+      class="group btn-secondary backdrop-blur-sm w-full justify-between rounded-cc px-4 h-10 text-sm font-medium bg-background/30"
+      onclick="toggleMobileCategories()"
+      data-state="closed"
+    >
+      <span class="flex items-center">
+        <i class="ph ph-list w-4 h-4 mr-2" aria-hidden="true"></i>
+        Categorias
+      </span>
+      <i class="ph ph-caret-down size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" aria-hidden="true"></i>
+    </button>
+    
+    <!-- Mobile Category Dropdown -->
+    <div id="mobile-categories-dropdown" class="data-[state=closed]:hidden data-[state=open]:block absolute top-full left-0 right-0 z-50 mt-2 bg-background/90 backdrop-blur-sm border border-border rounded-xl shadow-xl max-h-[60vh] overflow-y-auto custom-scrollbar" data-state="closed">
+      <div class="p-2 space-y-1">
+        <% for category in categories %>
+          <% if category.sub_categories and category.sub_categories.size > 0 %>
+            <div class="mobile-category-group">
+              <button
+                type="button"
+                class="group btn-ghost w-full justify-between rounded-cc px-3 py-2 text-sm font-medium border border-transparent hover:bg-primary/10 hover:border-primary/40"
+                onclick="toggleMobileCategoryGroup('<%= category.id %>')"
+                data-state="closed"
+              >
+                <span class="truncate"><%= category.name %></span>
+                <i class="ph ph-caret-down size-4 ml-2 transition-transform duration-200 group-data-[state=open]:rotate-180" aria-hidden="true"></i>
+              </button>
+              <div class="mobile-subcategories data-[state=closed]:hidden data-[state=open]:block mt-1 space-y-1" data-category="<%= category.id %>" data-state="closed">
+                <% for sub in category.sub_categories %>
+                  <a href="/category/<%= sub.slug %>" class="btn-ghost w-full justify-between px-4 py-1 h-8 text-sm font-medium" onclick="closeMobileCategories()">
+                    <span class="truncate block"><%= sub.name %></span>
+                  </a>
+                <% endfor %>
+              </div>
+            </div>
+          <% else %>
+            <a href="/category/<%= category.slug %>" class="btn-ghost w-full justify-between rounded-cc px-3 py-2 text-sm font-medium border border-transparent hover:bg-primary/10 hover:border-primary/40" onclick="closeMobileCategories()">
+              <span class="truncate"><%= category.name %></span>
+            </a>
+          <% endif %>
+        <% endfor %>
+      </div>
+    </div>
+  </div>
+</div>

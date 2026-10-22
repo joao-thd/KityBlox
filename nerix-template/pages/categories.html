@@ -1,0 +1,61 @@
+<% layout "layouts/layout", page_title: "Categorias" %>
+
+<main class="container py-10 sm:py-12">
+  <a href="/" class="inline-flex items-center gap-2 text-sm text-muted-foreground mb-6">
+    <i class="ph ph-arrow-left size-4" aria-hidden="true"></i>
+    Voltar para a loja
+  </a>
+
+  <div class="text-center mb-8 sm:mb-10">
+    <h1 class="text-3xl sm:text-4xl font-semibold mb-2 tracking-tight">Categorias</h1>
+    <p class="text-muted-foreground">Explore nossos produtos por categoria</p>
+  </div>
+
+  <% if categories and categories.size > 0 %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+      <% for category in categories %>
+        <% if category.slug == 'blox-fruits' or category.slug == 'rivals' or category.slug == 'gamepass-blox-fruits' or category.slug == 'teste-blox-fruits' %><% continue %><% endif %>
+        <a
+          href="/category/<%= category.slug %>"
+          class="group relative rounded-xl shadow-md transition-all duration-300 overflow-hidden border border-white/10 bg-muted/40 backdrop-blur-sm flex flex-col h-full"
+        >
+          <div class="aspect-[16/9] overflow-hidden flex-shrink-0 bg-gradient-to-br from-white/5 to-white/10">
+            <% if category.image == blank and category.slug != 'robux' %>
+              <img
+                src="/styles/legas-bloxx/cat-<%= category.slug %>.svg?v=3"
+                alt="<%= category.name %>"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+            <% elsif category.image %>
+              <img
+                src="<%= category.image | cdn %>"
+                alt="<%= category.name %>"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center">
+                <i class="ph ph-package size-12 text-muted-foreground" aria-hidden="true"></i>
+              </div>
+            <% endif %>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-xl font-bold text-center tracking-tight line-clamp-2">
+              <%= category.name %>
+            </h3>
+            <p class="text-sm text-center mt-3 text-muted-foreground">
+              Ver produtos desta categoria
+            </p>
+          </div>
+        </a>
+      <% endfor %>
+    </div>
+  <% else %>
+    <div class="text-center py-14">
+      <i class="ph ph-package size-14 text-muted-foreground mb-3" aria-hidden="true"></i>
+      <p class="text-muted-foreground">Nenhuma categoria disponível no momento.</p>
+    </div>
+  <% endif %>
+</main>

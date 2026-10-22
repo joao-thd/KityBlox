@@ -1,0 +1,69 @@
+<% capture content %>
+  <form id="withdraw-settings-form" onsubmit="event.preventDefault(); updateWithdrawSettings();">
+    <div class="space-y-4">
+      <div>
+        <label class="text-sm font-medium mb-2 block">Nome completo</label>
+        <input 
+          type="text" 
+          id="withdraw-full-name" 
+          name="full_name" 
+          required
+          <% if affiliate.withdraw_settings and affiliate.withdraw_settings.full_name %>
+            value="<%= affiliate.withdraw_settings.full_name %>"
+          <% endif %>
+          class="w-full h-9 bg-muted"
+          placeholder="Digite seu nome completo"
+        />
+      </div>
+      <div>
+        <label class="text-sm font-medium mb-2 block">Chave PIX</label>
+        <div class="flex gap-2">
+          <select 
+            id="withdraw-pix-key-type" 
+            name="pix_key_type" 
+            required
+            class="w-40 h-9 bg-muted-solid flex-shrink-0"
+          >
+            <option value="">Tipo</option>
+            <option value="CPF" <% if affiliate.withdraw_settings.pix_key_type == 'CPF' %>selected<% endif %>>CPF</option>
+            <option value="CNPJ" <% if affiliate.withdraw_settings.pix_key_type == 'CNPJ' %>selected<% endif %>>CNPJ</option>
+            <option value="EMAIL" <% if affiliate.withdraw_settings.pix_key_type == 'EMAIL' %>selected<% endif %>>E-mail</option>
+            <option value="PHONE" <% if affiliate.withdraw_settings.pix_key_type == 'PHONE' %>selected<% endif %>>Telefone</option>
+            <option value="RANDOM" <% if affiliate.withdraw_settings.pix_key_type == 'RANDOM' %>selected<% endif %>>Aleatória</option>
+          </select>
+          <input 
+            type="text" 
+            id="withdraw-pix-key" 
+            name="pix_key" 
+            required
+            <% if affiliate.withdraw_settings and affiliate.withdraw_settings.pix_key %>
+              value="<%= affiliate.withdraw_settings.pix_key %>"
+            <% endif %>
+            class="flex-1 h-9 bg-muted"
+            placeholder="Digite sua chave PIX"
+          />
+        </div>
+      </div>
+      <div>
+        <label class="text-sm font-medium mb-2 block">CPF/CNPJ</label>
+        <input 
+          type="text" 
+          id="withdraw-cpf-cnpj" 
+          name="cpf_cnpj" 
+          required
+          <% if affiliate.withdraw_settings and affiliate.withdraw_settings.cpf_cnpj %>
+            value="<%= affiliate.withdraw_settings.cpf_cnpj %>"
+          <% endif %>
+          class="w-full h-9 bg-muted"
+          placeholder="Digite seu CPF ou CNPJ"
+        />
+      </div>
+      <div class="flex gap-3 justify-end pt-4">
+        <button type="button" onclick="closeDialog('withdraw-settings')" class="btn-outline h-9">Cancelar</button>
+        <button type="submit" class="btn-primary h-9">Salvar</button>
+      </div>
+    </div>
+  </form>
+<% endcapture %>
+<% render 'components/dialog', id: 'withdraw-settings', title: 'Configurar informações de saque', content: content %>
+

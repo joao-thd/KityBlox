@@ -1,0 +1,50 @@
+<div class="space-y-3">
+  <% assign license_keys = pkg_deliveries | where: 'type', 'LICENSE_KEY' %>
+  <% if license_keys and license_keys.size > 0 %>
+    <div data-license-group class="group/license relative">
+      <div class="absolute right-0 -top-[2.5rem] bg-background translate-y-full opacity-0 group-hover/license:translate-y-0 group-hover/license:opacity-100 transition-all duration-300 flex items-center justify-end gap-2">
+        <button type="button" class="mb-4 btn-secondary bg-background h-7 w-7 p-0 text-xs shadow group" data-action="download-keys" data-package-name="<%= pkg.meta.name %>" data-is-downloaded="false">
+          <i class="ph ph-check size-[14px] hidden group-data-[is-downloaded=true]:block" aria-hidden="true"></i>
+          <i class="ph ph-download size-[14px] group-data-[is-downloaded=true]:hidden" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="mb-4 btn-secondary bg-background h-7 shadow text-xs px-2 group" data-action="copy-all-keys" data-is-copied="false">
+          <i class="ph ph-check size-[14px] hidden group-data-[is-copied=true]:block" aria-hidden="true"></i>
+          <i class="ph ph-copy size-[14px] group-data-[is-copied=true]:hidden" aria-hidden="true"></i>
+          Copiar tudo
+        </button>
+      </div>
+
+      <div class="divide-y bg-muted-solid border rounded-cc relative">
+        <% for d in license_keys %>
+          <div class="py-2 px-2 m-0 first:rounded-t-cc last:rounded-b-cc">
+            <div
+              class="text-sm license-key break-all line-clamp-3"
+              data-license-raw="<%= d.value | escape %>"
+              <% if d.formatted_value %>data-license-formatted="<%= d.formatted_value | escape %>"<% endif %>
+            >
+              <%= d.value | escape %>
+            </div>
+          </div>
+        <% endfor %>
+      </div>
+    </div>
+  <% endif %>
+
+  <% assign other_deliveries = pkg_deliveries | reject: 'type', 'LICENSE_KEY' %>
+  <% if other_deliveries and other_deliveries.size > 0 %>
+    <% for d in other_deliveries %>
+      <% if d.type == 'CONTENT' %>
+        <div class="nerix-content p-4 bg-muted-solid border rounded-cc break-words"><%= d.value %></div>
+      <% endif %>
+      <% if d.type == 'DOWNLOAD' %>
+        <div class="p-4 bg-muted-solid border rounded-cc flex justify-between items-center">
+          <div>
+            <p class="font-semibold"><%= d.value.name %></p>
+            <p class="text-sm text-muted-foreground">Tamanho: <span class="font-medium text-foreground"><%= d.value.size %></span></p>
+          </div>
+          <a href="<%= d.value.download_url %>" class="btn-primary h-9 px-4">Baixar</a>
+        </div>
+      <% endif %>
+    <% endfor %>
+  <% endif %>
+</div>

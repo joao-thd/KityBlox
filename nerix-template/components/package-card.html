@@ -1,0 +1,70 @@
+<% nerix
+  assign out_of_stock = false
+  unless package.has_variations or package.variations.size > 0
+    if package.stock.available == false
+      assign out_of_stock = true
+    elsif package.stock.quantity != blank and package.stock.quantity <= 0
+      assign out_of_stock = true
+    endif
+  endunless
+nerix %>
+
+<% assign pix_gateway = gateways | where: "name", "PIX" | first %>
+<% assign price = package.pricing.min | default: package.pricing.price %>
+
+<a href="/package/<%= package.slug %>" class="package lcard group<% if out_of_stock %> lcard--off<% endif %>">
+  <div class="lcard-media">
+    <img
+      class="lcard-img"
+      src="<% if package.image %><%= package.image %><% else %><%= 'public/assets/templates/KOPY/no-image.png' | cdn %><% endif %>"
+      alt="<%= package.name %>"
+      width="640"
+      height="640"
+      loading="lazy"
+      decoding="async"
+      referrerpolicy="no-referrer"
+      onerror="if(!this.dataset._fb){this.dataset._fb='1';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22640%22 height=%22640%22%3E%3Crect fill=%22%2318181b%22 width=%22640%22 height=%22640%22/%3E%3Ctext x=%22320%22 y=%22325%22 fill=%22%2371717a%22 text-anchor=%22middle%22 font-size=%2224%22%3Esem imagem%3C/text%3E%3C/svg%3E';}"
+    />
+    <span class="lcard-shine" aria-hidden="true"></span>
+
+    <% if out_of_stock %>
+      <span class="lcard-soldout">ESGOTADO</span>
+    <% else %>
+      <span class="lcard-chip"><i class="ph ph-lightning" aria-hidden="true"></i><span>Entrega rápida</span></span>
+    <% endif %>
+
+    <% if package.pricing.compare_at %>
+      <span class="lcard-off">-<%= package.pricing.percent_discount | abs | round %>%</span>
+    <% endif %>
+  </div>
+
+  <div class="lcard-body">
+    <p class="lcard-name"><%= package.name %></p>
+
+    <div class="lcard-price-row">
+      <div class="lcard-price-col">
+        <% if package.pricing.compare_at %>
+          <span class="lcard-old"><%= package.pricing.compare_at | format_price %></span>
+        <% endif %>
+        <span class="lcard-price">
+          <% if package.has_variations or package.variations.size > 0 %><small>a partir de</small><% endif %>
+          <%= price | format_price %>
+        </span>
+        <% if pix_gateway %>
+          <span class="lcard-pix-copy">À vista no Pix</span>
+        <% endif %>
+      </div>
+
+      <% if pix_gateway %>
+        <span class="lcard-pix" title="Pague com Pix">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@9/icons/pix.svg" alt="Pix">
+        </span>
+      <% endif %>
+    </div>
+
+    <button class="legas-buy lcard-buy" <% if out_of_stock %>disabled<% endif %>>
+      <i class="ph ph-shopping-cart" aria-hidden="true"></i>
+      <% if out_of_stock %>Esgotado<% else %>Comprar agora<% endif %>
+    </button>
+  </div>
+</a>

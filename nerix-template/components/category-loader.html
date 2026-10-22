@@ -1,0 +1,33 @@
+<% if category.packages_count > 0 or show_empty %>
+  <div class="<% if category.packages_count > 0 %>min-h-[300px]<% endif %>" id="cat-<%= category.slug %>">
+    <div class="flex items-center justify-center gap-1.5 sm:gap-2.5 md:gap-3.5 lg:gap-4 mb-4 sm:mb-5 md:mb-6 lg:mb-8 px-3 sm:px-4 md:px-6 reveal-fade-up">
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent to-muted-foreground/30"></div>
+      <h3 class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-foreground whitespace-nowrap px-1 sm:px-1.5 md:px-2 lg:px-2.5">
+        <%= category.name %>
+      </h3>
+      <div class="flex-1 h-px bg-gradient-to-l from-transparent to-muted-foreground/30"></div>
+    </div>
+
+    <% if show_empty %>
+      <div class="flex justify-center -mt-2 mb-2">
+        <a href="/category/<%= category.slug %>" class="text-xs sm:text-sm text-[#E83E8C] hover:text-[#D6336C] inline-flex items-center gap-1 font-semibold">
+          Ver categoria completa <i class="ph ph-arrow-right size-4" aria-hidden="true"></i>
+        </a>
+      </div>
+    <% endif %>
+
+    <% if category.packages_count > 0 %>
+      <div
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mt-4 sm:mt-8 package-list"
+        data-category-id="<%= category.id %>"
+      >
+      </div>
+    <% else %>
+      <div class="legas-empty mt-4 sm:mt-6">
+        <i class="ph ph-hourglass-medium size-8 text-[#E83E8C]" aria-hidden="true"></i>
+        <p class="font-bold text-foreground">Novos produtos chegando em breve</p>
+        <p class="text-sm text-muted-foreground">Estamos preparando o estoque de <%= category.name %>. Volte logo!</p>
+      </div>
+    <% endif %>
+  </div>
+<% endif %>

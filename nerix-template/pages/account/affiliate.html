@@ -1,0 +1,61 @@
+<% layout "layouts/layout", scripts: '/scripts/shop-account-sidebar.js, /scripts/shop-affiliate-dashboard.js, /scripts/affiliate.js', page_title: 'Afiliados' %>
+
+<div class="container py-12 min-h-screen">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="lg:col-span-1">
+      <% render 'components/account-sidebar' %>
+    </div>
+
+    <div class="lg:col-span-3 space-y-6">
+      <div class="mb-6">
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap gap-x-1.5 gap-y-1 items-center">
+            <li>
+              <a href="/" class="hover:underline text-muted-foreground">Início</a>
+            </li>
+            <i class="ph ph-caret-right text-muted-foreground size-4 shrink-0" aria-hidden="true"></i>
+            <li>
+              <a href="/account/orders" class="hover:underline text-muted-foreground">Área do cliente</a>
+            </li>
+            <i class="ph ph-caret-right text-muted-foreground size-4 shrink-0" aria-hidden="true"></i>
+            <li>
+              <span class="font-semibold text-foreground">Afiliados</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="text-2xl font-bold tracking-tight">Área do afiliado</h1>
+      </div>
+
+      <div id="affiliate-dashboard-root"></div>
+    </div>
+  </div>
+</div>
+
+<% capture content %>
+  <form id="become-affiliate-form" onsubmit="submitBecomeAffiliate(event)">
+    <div class="space-y-4">
+      <div>
+        <label for="affiliate-ref-code" class="text-sm font-medium mb-2 block">Código do seu link</label>
+        <input
+          type="text"
+          id="affiliate-ref-code"
+          name="ref_code"
+          class="w-full h-10 bg-muted border border-white/10 rounded-cc px-3"
+          required
+          autocomplete="off"
+        />
+        <p class="text-xs text-muted-foreground mt-2">Letras e números; será usado no parâmetro <code class="text-foreground/80">ref</code> da URL.</p>
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" class="btn-outline h-9" onclick="closeDialog('become-affiliate')">Cancelar</button>
+        <button type="submit" class="btn-primary h-9 flex items-center gap-2">
+          <span>Enviar solicitação</span>
+        </button>
+      </div>
+    </div>
+  </form>
+<% endcapture %>
+<% render 'components/dialog', id: 'become-affiliate', title: 'Solicitar afiliação', content: content %>

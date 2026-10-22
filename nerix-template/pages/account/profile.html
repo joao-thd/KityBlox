@@ -1,0 +1,66 @@
+<% layout "layouts/layout", page_title: 'Meu perfil', scripts: '/scripts/shop-account-sidebar.js, /scripts/shop-account-profile.js' %>
+
+<div class="container py-12 min-h-screen">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="lg:col-span-1">
+      <% render 'components/account-sidebar' %>
+    </div>
+
+    <div class="lg:col-span-3 space-y-6">
+      <div class="mb-2">
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap gap-x-1.5 gap-y-1 items-center">
+            <li>
+              <a href="/" class="hover:underline text-muted-foreground">Início</a>
+            </li>
+            <i class="ph ph-caret-right text-muted-foreground size-4 shrink-0" aria-hidden="true"></i>
+            <li>
+              <span class="font-semibold text-foreground">Meu perfil</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 class="text-2xl font-bold tracking-tight">Meu perfil</h1>
+        <a href="/account/orders" class="btn-outline h-9 w-fit shrink-0">
+          <i class="ph ph-package size-4" aria-hidden="true"></i>
+          Minhas compras
+        </a>
+      </div>
+
+      <div id="profile-page-loading" class="flex justify-center py-16">
+        <div class="size-10 border-2 border-white/20 border-t-primary rounded-full animate-spin" aria-hidden="true"></div>
+      </div>
+
+      <div id="profile-page-guest" class="hidden border border-white/10 rounded-cc p-8 bg-muted/50 text-center">
+        <p class="text-muted-foreground mb-4">Entre na sua conta para ver seus dados.</p>
+        <a href="/login" class="btn-primary h-9 inline-flex">Entrar</a>
+      </div>
+
+      <div id="profile-page-content" class="hidden space-y-6">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="border border-white/10 rounded-cc p-5 bg-muted/50 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Nome</p>
+            <p id="profile-field-name" class="text-lg font-semibold">—</p>
+          </div>
+          <div class="border border-white/10 rounded-cc p-5 bg-muted/50 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">E-mail</p>
+            <p id="profile-field-email" class="text-lg font-semibold break-all">—</p>
+          </div>
+          <div class="border border-white/10 rounded-cc p-5 bg-muted/50 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Telefone</p>
+            <p id="profile-field-phone" class="text-lg font-semibold">—</p>
+          </div>
+          <div class="border border-white/10 rounded-cc p-5 bg-muted/50 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Pedidos</p>
+            <p id="profile-field-orders" class="text-lg font-semibold">—</p>
+          </div>
+        </div>
+        <p class="text-xs text-muted-foreground">
+          Para alterar dados sensíveis ou senha, use as opções oferecidas pelo canal oficial da loja.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

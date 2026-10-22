@@ -1,0 +1,123 @@
+<footer class="mt-auto bg-background border-t border-white/10">
+  <div class="container py-8">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+      <div class="flex items-start gap-3">
+        <% if theme.logo != blank %>
+          <img
+            src="<%= theme.logo | cdn %>"
+            alt="<%= store.name %>"
+            class="h-10 w-10 rounded-md object-contain shrink-0"
+            loading="lazy"
+            decoding="async"
+          />
+        <% endif %>
+        <div class="min-w-0">
+          <h3 class="text-base font-semibold text-foreground leading-tight">
+            <%= store.name %>
+          </h3>
+          <% if theme.description != blank %>
+            <p class="text-sm text-muted-foreground mt-1 max-w-md">
+              <%= theme.description %>
+            </p>
+          <% endif %>
+        </div>
+      </div>
+
+      <% assign social = store.settings.social_links %>
+      <% assign has_social = false %>
+      <% if social %>
+        <% if social.discord != blank or social.instagram != blank or social.telegram != blank or social.whatsapp != blank or social.youtube != blank or social.facebook != blank or social.twitter != blank or social.tiktok != blank %>
+          <% assign has_social = true %>
+        <% endif %>
+      <% endif %>
+
+      <% if has_social %>
+        <div class="flex flex-col gap-2">
+          <p class="text-xs font-medium text-muted-foreground">Confira nossas redes sociais</p>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <% if social.discord != blank %>
+              <a href="<%= social.discord %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="Discord" aria-label="Discord">
+                <i class="ph ph-discord-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.instagram != blank %>
+              <a href="<%= social.instagram %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="Instagram" aria-label="Instagram">
+                <i class="ph ph-instagram-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.telegram != blank %>
+              <a href="<%= social.telegram %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="Telegram" aria-label="Telegram">
+                <i class="ph ph-telegram-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.whatsapp != blank %>
+              <a href="<%= social.whatsapp %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="WhatsApp" aria-label="WhatsApp">
+                <i class="ph ph-whatsapp-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.youtube != blank %>
+              <a href="<%= social.youtube %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="YouTube" aria-label="YouTube">
+                <i class="ph ph-youtube-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.facebook != blank %>
+              <a href="<%= social.facebook %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="Facebook" aria-label="Facebook">
+                <i class="ph ph-facebook-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.twitter != blank %>
+              <a href="<%= social.twitter %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="X / Twitter" aria-label="X / Twitter">
+                <i class="ph ph-x-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+            <% if social.tiktok != blank %>
+              <a href="<%= social.tiktok %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-muted border border-white/10 text-muted-foreground hover:text-foreground transition-colors" title="TikTok" aria-label="TikTok">
+                <i class="ph ph-tiktok-logo size-5" aria-hidden="true"></i>
+              </a>
+            <% endif %>
+          </div>
+        </div>
+      <% endif %>
+
+      <nav class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        <a href="/" class="text-muted-foreground hover:text-foreground transition-colors">Início</a>
+        <a href="/#store" class="text-muted-foreground hover:text-foreground transition-colors">Produtos</a>
+        <a href="/#faq" class="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+        <a href="/terms" class="text-muted-foreground hover:text-foreground transition-colors">Termos</a>
+      </nav>
+    </div>
+
+    <div class="mt-6 pt-4 border-t border-white/5 text-xs text-muted-foreground leading-relaxed space-y-2">
+      <p>
+        <strong class="text-foreground/80">Aviso:</strong> esta é uma loja independente de produtos digitais.
+        Todos os itens são <strong class="text-foreground/80">vendidos</strong> e entregues após a confirmação do
+        pagamento — não distribuímos itens, contas ou Robux gratuitos, não realizamos sorteios e não prometemos
+        recompensas dentro dos jogos.
+      </p>
+      <p>
+        <%= store.name %> não possui vínculo, patrocínio ou afiliação com a Roblox Corporation nem com os
+        desenvolvedores dos jogos citados. Roblox, Blox Fruits, Rivals, Fisch e demais nomes e marcas pertencem
+        aos seus respectivos proprietários e são usados apenas para identificar a qual jogo cada produto se refere.
+      </p>
+    </div>
+
+    <div class="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+      <span>© <%= "now" | date: "%Y" %> <%= store.name %>. Todos os direitos reservados.</span>
+      <a
+        href="https://nerix.com.br"
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-1.5 hover:text-foreground transition-colors"
+      >
+        Desenvolvido por
+        <img
+          src="https://cdn.nerix.com.br/Logo%20Header%20sem%20fundo.png"
+          alt="Nerix"
+          class="h-6 w-auto"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+    </div>
+  </div>
+</footer>

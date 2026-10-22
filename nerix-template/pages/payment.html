@@ -1,0 +1,202 @@
+<% layout "layouts/layout", page_title: 'Pagamento', robots: 'noindex, nofollow' %>
+
+<main class="container py-8 max-w-7xl">
+  <div class="mb-6">
+    <a href="/" class="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      <i class="ph ph-arrow-left size-4" aria-hidden="true"></i>
+      Voltar para a loja
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+    <section class="xl:col-span-2 space-y-6">
+      <div class="border border-white/10 rounded-2xl bg-muted/70 p-5 md:p-7 backdrop-blur-sm space-y-5">
+        <div class="inline-flex items-center gap-3 px-4 py-3 rounded-xl border border-primary/30 bg-primary/10 text-primary">
+          <i class="ph ph-spinner-gap size-5 animate-spin" aria-hidden="true"></i>
+          <p class="font-semibold">Aguardando pagamento</p>
+        </div>
+
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold">Finalize seu pagamento</h1>
+          <p class="text-sm text-muted-foreground mt-1">
+            <% if order.crypto_awaiting_confirmation %>Pagamento recebido. Estamos aguardando as confirmações da rede.<% elsif order.crypto_partial_payment %>Recebemos uma parte. Envie somente o valor restante abaixo.<% elsif order.is_crypto %>Envie o valor exato em Litecoin para concluir sua compra.<% else %>Escaneie o QR Code ou copie o código PIX para concluir sua compra.<% endif %>
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-white/10 bg-background/60 p-5">
+          <h2 class="text-lg font-semibold mb-1"><% if order.crypto_awaiting_confirmation %>Pagamento recebido<% elsif order.is_crypto %>Pagamento em Litecoin<% else %>QR Code PIX<% endif %></h2>
+          <p class="text-sm text-muted-foreground mb-4"><% if order.crypto_awaiting_confirmation %>Não envie outro pagamento. A confirmação será identificada automaticamente.<% elsif order.is_crypto %>Escaneie com uma carteira compatível com a rede Litecoin.<% else %>Escaneie com o app do seu banco.<% endif %></p>
+          <% if order.crypto_partial_payment %><div class="mb-4 rounded-xl border border-amber-500/25 bg-amber-500/10 p-3 text-sm"><p class="font-semibold text-amber-500">Pagamento parcial identificado</p><p class="mt-1 text-muted-foreground">Recebido: <%= order.crypto_received_amount %> LTC · Falta: <strong><%= order.crypto_remaining_amount %> LTC</strong></p></div><% endif %>
+          <% if order.crypto_awaiting_confirmation %><div class="rounded-xl border border-primary/25 bg-primary/10 p-5 text-center"><i class="ph ph-spinner-gap mx-auto size-7 animate-spin text-primary"></i><p class="mt-3 font-semibold">Aguardando confirmações da rede Litecoin</p></div><% endif %>
+
+          <div class="flex items-center justify-center <% if order.crypto_awaiting_confirmation %>hidden<% endif %>">
+            <div class="border border-white/10 rounded-2xl bg-background p-3">
+              <% if order and order.qr_code %>
+                <img src="<%= order.qr_code %>" alt="<% if order.is_crypto %>QR Code Litecoin<% else %>QR Code PIX<% endif %>" width="260" height="260" class="w-full max-w-[260px] h-auto bg-white p-1 rounded-xl" />
+              <% else %>
+                <div class="text-sm text-muted-foreground text-center py-16 px-8">QR Code indisponível.</div>
+              <% endif %>
+            </div>
+          </div>
+
+          <div class="mt-4 <% if order.crypto_awaiting_confirmation %>hidden<% endif %>">
+            <% if order.is_crypto %>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div class="rounded-xl border border-white/10 bg-muted/50 p-3"><p class="text-xs text-muted-foreground">Valor para enviar</p><p class="mt-1 text-lg font-bold text-primary"><%= order.crypto_amount %> LTC</p></div>
+                <div class="rounded-xl border border-white/10 bg-muted/50 p-3"><p class="text-xs text-muted-foreground">Rede</p><p class="mt-1 font-semibold">Litecoin</p></div>
+              </div>
+              <p class="mb-2 text-xs text-muted-foreground">O valor já inclui <%= order.crypto_sender_fee_buffer %> LTC de margem para taxas descontadas pela carteira de envio.</p>
+              <p class="mb-4 text-xs text-muted-foreground">Cotação reservada por <strong class="text-foreground" data-crypto-expiry="<%= order.crypto_expires_at %>">--:--</strong></p>
+            <% endif %>
+            <p class="text-sm font-semibold mb-3"><% if order.is_crypto %>Endereço Litecoin<% else %>Código PIX (copia e cola)<% endif %></p>
+            <div class="flex gap-2 items-center h-10">
+              <input
+                type="text"
+                class="h-full w-full px-3 text-xs rounded-md border border-white/10 bg-background font-mono"
+                readonly
+                value="<% if order.is_crypto %><%= order.crypto_address %><% else %><%= order.pix_code | default: '' %><% endif %>"
+              />
+              <button
+                type="button"
+                class="h-full shrink-0 px-3 rounded-md btn-primary group inline-flex items-center gap-1.5"
+                data-action="copy"
+                data-content="<% if order.is_crypto %><%= order.crypto_address %><% else %><%= order.pix_code %><% endif %>"
+                data-is-copied="false"
+              >
+                <i class="ph ph-check size-4 hidden group-data-[is-copied=true]:block" aria-hidden="true"></i>
+                <i class="ph ph-copy size-4 hidden group-data-[is-copied=false]:block" aria-hidden="true"></i>
+                <span class="text-xs">Copiar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="xl:col-span-1 space-y-6">
+      <div class="border border-white/10 rounded-2xl bg-muted/70 p-5 backdrop-blur-sm">
+        <h3 class="text-base font-semibold mb-4">Informações do pedido</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-muted-foreground">Pedido</span>
+            <span class="font-mono text-xs">#<%= order.internal_id %></span>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-muted-foreground">Status</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-500/15 text-yellow-400">Pendente</span>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-muted-foreground">Método</span>
+            <span><% if order.is_crypto %>Litecoin (LTC)<% else %>PIX<% endif %></span>
+          </div>
+          <div class="detail-dash"></div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-medium">Total</span>
+            <span class="text-lg font-bold text-primary">
+              <% if order.total != blank %><%= order.total %><% else %>—<% endif %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="border border-white/10 rounded-2xl bg-muted/70 p-5 backdrop-blur-sm">
+        <h3 class="text-base font-semibold mb-4"><% if order.is_crypto %>Como pagar com Litecoin<% else %>Como pagar com PIX<% endif %></h3>
+        <div class="space-y-3 text-sm text-muted-foreground">
+          <% if order.is_crypto %>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">1</span><p>Abra sua carteira de criptomoedas e selecione Litecoin.</p></div>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">2</span><p>Escaneie o QR Code ou copie o endereço.</p></div>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">3</span><p>Envie exatamente <strong><%= order.crypto_amount %> LTC</strong> pela rede Litecoin.</p></div>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">4</span><p>A confirmação é identificada automaticamente.</p></div>
+          <% else %>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">1</span><p>Abra o aplicativo do seu banco.</p></div>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">2</span><p>Escolha pagar com Pix e escaneie o QR Code.</p></div>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">3</span><p>Se preferir, use o código copia e cola.</p></div>
+            <div class="flex items-start gap-2"><span class="mt-0.5 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center bg-primary/15 text-primary">4</span><p>A aprovação é automática após a confirmação do banco.</p></div>
+          <% endif %>
+        </div>
+      </div>
+
+      <div id="go-to-order" class="hidden opacity-0 transition-opacity border border-white/10 rounded-2xl bg-muted/70 p-5 backdrop-blur-sm">
+        <a id="payment-order-link" href="#" data-order-ref="<%= order.internal_id %>" class="btn-primary h-10 w-full inline-flex items-center justify-center">
+          Ir para o pedido
+        </a>
+        <p class="text-xs text-muted-foreground text-center mt-2">Após realizar o pagamento, clique no botão acima para prosseguir.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+  const ORDER_ID = "<%= order.internal_id %>";
+  const CRYPTO_DISPLAY_AMOUNT = "<%= order.crypto_amount %>";
+  const CRYPTO_PARTIAL = <% if order.crypto_partial_payment %>true<% else %>false<% endif %>;
+  const CRYPTO_AWAITING = <% if order.crypto_awaiting_confirmation %>true<% else %>false<% endif %>;
+  document.querySelectorAll('[data-crypto-expiry]').forEach(function (element) {
+    var expiresAt = new Date(element.getAttribute('data-crypto-expiry') || '').getTime();
+    function updateExpiry() {
+      var remaining = Math.max(0, expiresAt - Date.now());
+      if (!Number.isFinite(expiresAt) || remaining <= 0) { element.textContent = 'expirada'; return; }
+      var minutes = Math.floor(remaining / 60000);
+      var seconds = Math.floor((remaining % 60000) / 1000);
+      element.textContent = minutes + ':' + String(seconds).padStart(2, '0');
+    }
+    updateExpiry(); setInterval(updateExpiry, 1000);
+  });
+  (function () {
+    const orderId = ORDER_ID;
+    function orderPath(ref) {
+      var r = encodeURIComponent(String(ref || '').trim());
+      var path = '/order/' + r;
+      return typeof shopUrl === 'function' ? shopUrl(path) : path;
+    }
+
+    var linkEl = document.getElementById('payment-order-link');
+    if (linkEl) {
+      var ref = linkEl.getAttribute('data-order-ref') || orderId;
+      linkEl.setAttribute('href', orderPath(ref));
+    }
+
+    var pollDone = false;
+    async function checkStatus() {
+      if (pollDone) return;
+      try {
+        const res = await Nerix.getOrderStatus(orderId);
+        const data = (res && res.data) ? res.data : (res || {});
+        const status = String((data && (data.status || (data.order && data.order.status))) || '').toLowerCase();
+        const paid = data && (
+          data.paid === true ||
+          status === 'approved' ||
+          status === 'paid' ||
+          status === 'delivered'
+        );
+        const crypto = data && data.crypto_payment;
+        if (crypto && (String(crypto.amount || '') !== CRYPTO_DISPLAY_AMOUNT || Boolean(crypto.partial_payment) !== CRYPTO_PARTIAL || Boolean(crypto.awaiting_confirmation) !== CRYPTO_AWAITING)) {
+          window.location.reload(); return;
+        }
+        if (paid) {
+          pollDone = true;
+          window.location.href = orderPath(orderId);
+        }
+      } catch (e) {
+        // ignore errors and try again
+      }
+    }
+
+    checkStatus();
+    setInterval(checkStatus, 5000);
+  })();
+
+  setTimeout(() => {
+    const element = document.getElementById('go-to-order');
+    // Remove hidden para o elemento entrar no layout
+    element.classList.remove('hidden');
+    
+    // Primeiro requestAnimationFrame: aguarda o navegador processar a mudança de display
+    requestAnimationFrame(() => {
+      // Segundo requestAnimationFrame: garante que o reflow aconteceu antes da animação
+      requestAnimationFrame(() => {
+        element.classList.remove('opacity-0');
+      });
+    });
+  }, 16000);
+</script>

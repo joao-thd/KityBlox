@@ -1,0 +1,332 @@
+<% layout "layouts/layout", scripts: '/scripts/product-info.js, /scripts/package.js', page_title: package.name %>
+
+<script id="__nerix_package_variations" type="application/json"><%= package.variations | json %></script>
+
+<% nerix
+  assign display_package = package
+  assign has_variations = package.variations.size > 0
+
+  if has_variations
+    assign selected_variation = package.variations | where: "slug", query.variation | first
+    if selected_variation == null
+      assign selected_variation = package.variations | where: "id", query.variation | first
+    endif
+    assign first_variation = package.variations | first
+    assign display_package = selected_variation | default: first_variation
+  endif
+nerix %>
+
+<script id="__nerix_package_initial" type="application/json"><%= display_package | json %></script>
+<script id="__nerix_package_fields" type="application/json"><%= display_package.fields | json %></script>
+
+<% capture content %>
+  <div id="custom-fields" class="w-full flex flex-col">
+    <div id="custom-fields-fields" class="space-y-4"></div>
+    <button
+      id="custom-fields-confirm"
+      class="btn-primary h-10 w-full mt-6"
+    >
+      Confirmar
+    </button>
+  </div>
+<% endcapture %>
+
+<% render 'components/dialog', id: 'custom-fields', title: display_package.name, content: content %>
+
+<% capture stock_alert_content %>
+  <div id="stock-alert-form" class="w-full flex flex-col gap-4">
+    <p id="stock-alert-message" class="text-sm text-muted-foreground"></p>
+    <div>
+      <label for="stock-alert-email" class="text-sm font-medium mb-1.5 block">Seu e-mail</label>
+      <input
+        id="stock-alert-email"
+        type="email"
+        class="input w-full"
+        placeholder="seu@email.com"
+        autocomplete="email"
+        required
+      />
+      <p id="stock-alert-error" class="hidden text-sm text-red-400 mt-1.5"></p>
+      <p id="stock-alert-success" class="hidden text-sm text-emerald-400 mt-1.5"></p>
+    </div>
+    <button
+      id="stock-alert-confirm"
+      type="button"
+      class="btn-primary h-10 w-full"
+    >
+      <i class="ph ph-bell size-5 shrink-0" aria-hidden="true"></i>
+      Quero ser avisado
+    </button>
+  </div>
+<% endcapture %>
+
+<% render 'components/dialog', id: 'stock-alert', title: 'Avise-me quando voltar', content: stock_alert_content %>
+
+<% nerix
+  assign out_of_stock = false
+  if display_package.stock.available == false
+    assign out_of_stock = true
+  elsif display_package.stock.quantity != blank and display_package.stock.quantity <= 0
+    assign out_of_stock = true
+  endif
+
+  assign stock_alert_enabled = false
+  assign stock_alert_button = 'Avise-me quando voltar'
+  if display_package.product_info and display_package.product_info.stock_alert and display_package.product_info.stock_alert.enabled == true
+    assign stock_alert_enabled = true
+    if display_package.product_info.stock_alert.button_text != blank
+      assign stock_alert_button = display_package.product_info.stock_alert.button_text
+    endif
+  endif
+nerix %>
+
+<div class="py-12 package-wrapper" data-package-id="<%= display_package.id %>" data-is-variation-parent="<%= has_variations %>">
+  <div class="container">
+    <div class="mx-auto w-full max-w-5xl">
+    <div class="grid grid-cols-1 gap-4">
+      <div class="space-y-4">
+        <div class="border bg-muted backdrop-blur-sm h-fit rounded-cc p-4 flex-1">
+          <div class="flex flex-wrap gap-6">
+            <div id="package-image-carousel" class="package-image-carousel w-full md:w-[46%] aspect-square relative overflow-hidden rounded-xl bg-[#03133f] group">
+              <img
+                id="package-image"
+                alt="<%= display_package.name %>"
+                class="absolute inset-0 h-full w-full object-contain transition-all
+                <% if out_of_stock %>blur-sm opacity-80<% endif %>"
+                src="<% if display_package.image %><%= display_package.image %><% else %><%= 'public/assets/templates/KOPY/no-image.png' | cdn %><% endif %>"
+                width="640"
+                height="360"
+                loading="eager"
+                decoding="async"
+                referrerpolicy="no-referrer"
+                onerror="if(!this.dataset._fb){this.dataset._fb='1';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22640%22 height=%22360%22%3E%3Crect fill=%22%2318181b%22 width=%22640%22 height=%22360%22/%3E%3C/svg%3E';}"
+              >
+              <button type="button" id="package-image-prev" class="package-image-nav package-image-nav--prev hidden" aria-label="Imagem anterior">
+                <i class="ph ph-caret-left size-5" aria-hidden="true"></i>
+              </button>
+              <button type="button" id="package-image-next" class="package-image-nav package-image-nav--next hidden" aria-label="Próxima imagem">
+                <i class="ph ph-caret-right size-5" aria-hidden="true"></i>
+              </button>
+              <span id="package-image-counter" class="package-image-counter hidden" aria-live="polite"></span>
+            </div>
+
+
+            <div class="legas-pdp-info flex flex-col w-full flex-1">
+              <h3 id="package-name" title="<%= display_package.name %>" class="legas-pdp-title"><%= display_package.name %></h3>
+
+              <a id="pdp-rating" href="#product-reviews-section" class="legas-pdp-rating hidden">
+                <span id="pdp-rating-stars" class="legas-pdp-stars"></span>
+                <strong id="pdp-rating-value"></strong>
+                <span id="pdp-rating-count" class="legas-pdp-rating-count"></span>
+              </a>
+
+              <div class="legas-pdp-badges flex items-center gap-2 mt-2 mb-4">
+                <% if config.show_sales == true %>
+                  <p id="package-sales" class="legas-pill legas-pill--sales">
+                    <i class="ph ph-trend-up" aria-hidden="true"></i>
+                    <%= display_package.sales %> venda<% if display_package.sales > 1 %>s<% endif %>
+                  </p>
+                <% endif %>
+
+                <p id="package-stock" class="legas-pill legas-pill--stock"><i class="ph ph-package" aria-hidden="true"></i>
+                  <% if display_package.stock.available == false %>
+                    Sem estoque
+                  <% elsif display_package.stock.quantity != blank %>
+                    <%= display_package.stock.quantity %> em estoque
+                  <% else %>
+                    100+ em estoque
+                  <% endif %>
+                </p>
+
+                <% if package.is_auto_delivery %>
+                  <p class="legas-pill legas-pill--auto">
+                    <i class="ph ph-lightning" aria-hidden="true"></i> Entrega automática
+                  </p>
+                <% endif %>
+              </div>
+
+              <div
+                id="package-percent-discount-container"
+                class="<% if display_package.pricing.compare_at %>flex<% else %>hidden<% endif %> gap-2 items-center"
+              >
+                <p id="package-compare-at" class="text-base leading-none line-through text-muted-foreground">
+                  <%= display_package.pricing.compare_at | format_price %>
+                </p>
+
+                <div class="h-4 rounded px-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 ring-1 ring-emerald-300/25 inline-flex gap-1 items-center shadow-sm shadow-emerald-900/30">
+                  <i class="ph ph-trend-down size-3 shrink-0 text-inherit" aria-hidden="true"></i>
+                  <span class="text-[10px] font-bold leading-none text-inherit">
+                    <span id="package-percent-discount">
+                      <%= display_package.pricing.percent_discount | abs | round %>
+                    </span>
+                    %
+                  </span>
+                </div>
+              </div>
+
+              <div class="legas-pdp-price mb-6">
+                <h4 id="package-price" class="legas-pdp-price-value">
+                  <%= display_package.pricing.price | format_price %>
+                </h4>
+
+                <% assign pix_gateway = gateways | where: "name", "PIX" | first %>
+                <% if pix_gateway %>
+                  <p class="legas-pdp-pix"><i class="ph ph-lightning" aria-hidden="true"></i> À vista no Pix</p>
+                <% endif %>
+              </div>
+
+              <% render 'components/variations-list', package: package %>
+
+              <div class="legas-buybox mt-auto w-full space-y-2 rounded-cc p-3 border">
+                <button
+                  id="purchase-button"
+                  type="button"
+                  class="legas-buy h-12 w-full whitespace-nowrap text-base font-extrabold uppercase tracking-wide inline-flex gap-2 items-center justify-center"
+                  <% if out_of_stock and stock_alert_enabled %>
+                  onclick="openStockAlertDialog()"
+                  <% else %>
+                  onclick="cartAdd(true)"
+                  <% if out_of_stock %>disabled<% endif %>
+                  <% endif %>
+                >
+                  <% if out_of_stock and stock_alert_enabled %>
+                  <i class="ph ph-bell size-5 shrink-0" aria-hidden="true"></i>
+                  <%= stock_alert_button %>
+                  <% else %>
+                  <i class="ph ph-shopping-cart size-5 shrink-0" aria-hidden="true"></i>
+                  Comprar agora
+                  <% endif %>
+                </button>
+
+                <button
+                  id="add-to-cart-button"
+                  type="button"
+                  class="btn-outline h-10 w-full whitespace-nowrap"
+                  onclick="cartAdd()"
+                  <% if out_of_stock %>disabled<% endif %>
+                  <% if out_of_stock and stock_alert_enabled %>style="display:none"<% endif %>
+                >
+                  <i class="ph ph-plus size-5 shrink-0" aria-hidden="true"></i>
+                  Adicionar ao carrinho
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="package-sections-root" class="package-sections-root legas-pdp-sections space-y-4 mt-4">
+        <section
+          id="package-product-info"
+          class="hidden package-product-info-stack space-y-4"
+          aria-label="Informações do produto"
+        ></section>
+
+        <div id="package-description-panel" class="border bg-muted backdrop-blur-sm p-4 rounded-cc">
+          <h4 class="text-lg font-semibold leading-5">Descrição</h4>
+          <div id="package-description" class="nerix-content mt-4">
+            <%= display_package.description %>
+          </div>
+        </div>
+
+        <div class="legas-pkg-faq border bg-muted backdrop-blur-sm rounded-cc overflow-hidden">
+          <% render "components/faq" %>
+        </div>
+
+        <section
+          id="product-reviews-section"
+          class="border bg-muted backdrop-blur-sm p-4 sm:p-5 rounded-cc"
+          aria-labelledby="reviews-heading"
+        >
+          <div class="flex flex-col gap-4 border-b border-white/10 pb-4 mb-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0">
+              <h4 id="reviews-heading" class="text-lg font-semibold leading-tight flex items-center gap-2">
+                <i class="ph ph-star text-primary shrink-0" style="font-size: 1.25rem" aria-hidden="true"></i>
+                Avaliações dos clientes
+              </h4>
+              <p id="reviews-summary-line" class="text-sm text-muted-foreground mt-1.5">Carregando…</p>
+            </div>
+            <div id="reviews-rating-badge" class="hidden shrink-0 rounded-md border border-white/10 bg-background/50 px-3 py-2 text-center">
+              <p id="reviews-average-value" class="text-2xl font-bold tabular-nums leading-none">—</p>
+              <div id="reviews-average-stars" class="flex justify-center gap-0.5 mt-1 text-primary" aria-hidden="true"></div>
+              <p id="reviews-total-count" class="text-xs text-muted-foreground mt-1">—</p>
+            </div>
+          </div>
+
+          <div id="reviews-loading" class="text-sm text-muted-foreground py-8 text-center">
+            Carregando avaliações…
+          </div>
+          <div id="reviews-error" class="hidden text-sm text-center py-6 px-2 rounded-md border border-red-500/25 bg-red-500/5 text-red-300"></div>
+          <div
+            id="reviews-empty"
+            class="hidden text-sm text-muted-foreground text-center py-10 px-4 rounded-md border border-dashed border-white/10 bg-background/30"
+          >
+            Ainda não há avaliações públicas para este produto.
+          </div>
+          <ul id="reviews-list" class="space-y-3 list-none p-0 m-0"></ul>
+          <div class="mt-5 flex justify-center">
+            <button type="button" id="reviews-load-more" class="btn-outline h-10 px-6 text-sm hidden">
+              Carregar mais
+            </button>
+          </div>
+        </section>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    // Mostra a nota média no topo assim que as avaliações carregam (dados reais).
+    (function pdpRating() {
+      const chip = document.getElementById('pdp-rating');
+      const source = document.getElementById('reviews-average-value');
+      const totalEl = document.getElementById('reviews-total-count');
+      if (!chip || !source) return;
+
+      function paint() {
+        const avg = parseFloat(String(source.textContent || '').replace(',', '.'));
+        if (!isFinite(avg) || avg <= 0) return;
+        const stars = '★★★★★'.slice(0, Math.round(avg)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(avg));
+        document.getElementById('pdp-rating-stars').textContent = stars;
+        document.getElementById('pdp-rating-value').textContent = avg.toFixed(1).replace('.', ',');
+        document.getElementById('pdp-rating-count').textContent = (totalEl && totalEl.textContent.trim()) || '';
+        chip.classList.remove('hidden');
+      }
+
+      new MutationObserver(paint).observe(source, { childList: true, characterData: true, subtree: true });
+      paint();
+    })();
+  </script>
+
+  <div
+    class="package-list"
+    data-category-id="<%= package.category_id %>"
+    data-current-package="<%= package.parent_id | default: package.id %>"
+  >
+  </div>
+</div>
+
+<script>
+  (function () {
+    const container = document.getElementById('custom-fields-fields');
+
+    function render(fields) {
+      if (!container) return;
+
+      if (!Array.isArray(fields) || fields.length === 0) {
+        container.innerHTML = '<p class="text-sm text-muted-foreground">Nenhum campo adicional necessário.</p>';
+        return;
+      }
+
+      const html = fields
+        .map((field) => `<% render 'components/custom-field' %>`)
+        .join('');
+
+      container.innerHTML = html;
+
+      window.CustomFields.afterRender(container);
+    }
+
+    window.CustomFields = Object.assign(window.CustomFields || {}, { render });
+  })();
+</script>

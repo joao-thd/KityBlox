@@ -1,0 +1,22 @@
+<% layout "layouts/layout", page_title: 'Termos' %>
+
+<section class="container py-10 max-w-screen-lg">
+  <div class="mb-12 w-fit">
+    <h5 class="text-sm font-semibold tracking-widest uppercase leading-none text-primary"><%= store.name %></h5>
+    <h1 class="text-center text-3xl font-bold leading-none">Termos e Condições</h1>
+  </div>
+
+  <div class="bg-muted backdrop-blur-sm rounded-cc border p-4">
+    <% if terms %>
+      <div class="nerix-content">
+        <%= terms %>
+      </div>
+    <% else %>
+      <div class="text-sm text-muted-foreground">
+        Os termos e condições ainda não foram definidos para esta loja.
+      </div>
+    <% endif %>
+  </div>
+</section>
+
+

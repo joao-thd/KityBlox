@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <style>
+    :root {
+      --primary: 337 82% 56%;
+      --secondary: 329 86% 87%;
+
+      --background: 255 251 253;
+      --foreground: 81 40 65;
+
+      --border: 237 204 219;
+      --card: 255 255 255;
+
+      --muted: 255 241 248;
+      --muted-foreground: 133 91 113;
+
+      --muted-solid: 255 236 245;
+
+      --radius: 1rem;
+
+      --background-image: url('<%= config.background_image %>');
+    }
+  </style>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="nerix-shop-ssr" content="1">
+  <script>
+    (function () {
+      if (!('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { r.unregister(); });
+      });
+      if ('caches' in window) {
+        caches.keys().then(function (keys) {
+          keys.forEach(function (k) { caches.delete(k); });
+        });
+      }
+    })();
+  </script>
+  <meta name="nerix-google-client-id" content="<%= config.google_client_id %>" />
+
+  <meta name="robots" content="<% if robots %><%= robots %><% else %>index, follow<% endif %>" />
+  <meta property="twitter:image" content="<%= theme.logo | cdn %>" />
+  <meta property="twitter:card" content="summary" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="<%= store.name %> - <%= page_title %>" />
+  <meta property="og:site_name" content="<%= store.name %>" />
+  <meta property="og:description" content="<%= theme.description %>" />
+  <meta property="og:image" content="<%= theme.logo | cdn %>" />
+  <meta property="og:image:width" content="96" />
+  <meta property="og:image:height" content="96" />
+  <meta name="description" content="<%= theme.description %>" />
+
+  <% assign default_favicon = 'public/36x36.png' | cdn %>
+  <% assign favicon = theme.favicon | default: default_favicon | cdn %>
+  <link rel="icon" href="<%= favicon %>" />
+  <link rel="stylesheet" href="/styles/core.css?v=18">
+  <link rel="stylesheet" href="/styles/hello-kitty.css?v=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Nunito:wght@400;500;600;700;800;900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.css" />
+
+  <% if store.google_analytics_id != blank %>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= store.google_analytics_id %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<%= store.google_analytics_id %>');
+    </script>
+  <% endif %>
+
+  <% if store.settings and store.settings.google_ads_conversion_id != blank %>
+    <% if store.google_analytics_id == blank %>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=<%= store.settings.google_ads_conversion_id %>"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      </script>
+    <% endif %>
+    <script>
+      gtag('config', '<%= store.settings.google_ads_conversion_id %>');
+    </script>
+    <% if store.settings.google_ads_conversion_label != blank %>
+      <script>
+        window.__NERIX_GOOGLE_ADS_CONVERSION__ = {
+          id: '<%= store.settings.google_ads_conversion_id %>',
+          label: '<%= store.settings.google_ads_conversion_label %>'
+        };
+      </script>
+    <% endif %>
+  <% endif %>
+
+  <% if store.facebook_pixel_id != blank %>
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '<%= store.facebook_pixel_id %>');
+      fbq('track', 'PageView');
+    </script>
+    <noscript>
+      <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=<%= store.facebook_pixel_id %>&ev=PageView&noscript=1"
+      />
+    </noscript>
+  <% endif %>
+
+  <% if store.settings and store.settings.clarity_id != blank %>
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window,document,"clarity","script","<%= store.settings.clarity_id %>");
+    </script>
+  <% endif %>
+
+  <% if store.tiktok_pixel_id != blank %>
+    <script>
+      !function (w, d, t) {
+        w.TiktokAnalyticsObject = t;
+        var ttq = w[t] = w[t] || [];
+        ttq.methods = ['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie'];
+        ttq.setAndDefer = function (obj, method) { obj[method] = function () { obj.push([method].concat(Array.prototype.slice.call(arguments, 0))); }; };
+        for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+        ttq.instance = function (pixel) {
+          var inst = ttq._i[pixel] || [];
+          for (var j = 0; j < ttq.methods.length; j++) ttq.setAndDefer(inst, ttq.methods[j]);
+          return inst;
+        };
+        ttq.load = function (pixel, opts) {
+          var src = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+          ttq._i = ttq._i || {};
+          ttq._i[pixel] = [];
+          ttq._i[pixel]._u = src;
+          ttq._t = ttq._t || {};
+          ttq._t[pixel] = +new Date();
+          ttq._o = ttq._o || {};
+          ttq._o[pixel] = opts || {};
+          var s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = src + '?sdkid=' + pixel + '&lib=' + t;
+          var x = document.getElementsByTagName('script')[0];
+          x.parentNode.insertBefore(s, x);
+        };
+        ttq.load('<%= store.tiktok_pixel_id %>');
+        ttq.page();
+      }(window, document, 'ttq');
+    </script>
+  <% endif %>
+
+  <% if store.facebook_pixel_id == blank %>
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '28517105004612178');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=28517105004612178&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+  <% endif %>
+
+  <% if store.tiktok_pixel_id == blank %>
+    <!-- TikTok Pixel Code Start -->
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+      ttq.load('DAU67PJC77UAAGDALS0G');
+      ttq.page();
+    }(window, document, 'ttq');
+    </script>
+    <!-- TikTok Pixel Code End -->
+  <% endif %>
+
+  <% if store.crisp_id != blank %>
+    <script type="text/javascript">
+      window.$crisp = [];
+      window.CRISP_WEBSITE_ID = "<%= store.crisp_id %>";
+      (function () {
+        var d = document;
+        var s = d.createElement("script");
+        s.src = "https://client.crisp.chat/l.js";
+        s.async = 1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      })();
+    </script>
+  <% endif %>
+
+  <% if store.settings and store.settings.gtm_id != blank %>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', '<%= store.settings.gtm_id %>');
+    </script>
+  <% endif %>
+
+  <% if store.settings and store.settings.tawk_to_property_id != blank and store.settings.tawk_to_widget_id != blank %>
+    <script type="text/javascript">
+      var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+      (function () {
+        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/<%= store.settings.tawk_to_property_id %>/<%= store.settings.tawk_to_widget_id %>';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+      })();
+    </script>
+  <% endif %>
+
+  <% if store.settings and store.settings.openai_ads_pixel_id != blank %>
+    <script>
+      (function (w, d, s, u) {
+        if (w.oaiq) return;
+        var q = function () { q.q.push(arguments); };
+        q.q = [];
+        w.oaiq = q;
+        var js = d.createElement(s);
+        js.async = true;
+        js.src = u;
+        var f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(js, f);
+      })(window, document, "script", "https://bzrcdn.openai.com/sdk/oaiq.min.js");
+      oaiq("init", { pixelId: "<%= store.settings.openai_ads_pixel_id %>" });
+    </script>
+  <% endif %>
+
+  <title>
+    <%= store.name %> - <%= page_title %>
+  </title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "hsl(var(--primary))",
+            secondary: "hsl(var(--secondary))",
+
+            background: "rgb(var(--background))",
+            card: "rgb(var(--card))",
+            foreground: "rgb(var(--foreground))",
+            border: "rgb(var(--border))",
+            muted: "rgb(var(--muted))",
+            "muted-foreground": "rgb(var(--muted-foreground))",
+            "muted-solid": "rgb(var(--muted-solid))",
+          },
+          borderRadius: {
+            cc: 'var(--radius)',
+          }
+        },
+        container: {
+          center: true,
+          padding: "1rem",
+          screens: {
+            "2xl": "1400px",
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      * {
+        @apply border-border;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'Nunito', sans-serif;
+        @apply bg-background text-foreground;
+        background-color: #fffbfd;
+        background-image:
+          radial-gradient(circle at 10% 12%, rgba(255, 193, 218, 0.24), transparent 34rem),
+          radial-gradient(circle at 90% 35%, rgba(255, 212, 230, 0.25), transparent 38rem);
+        background-attachment: fixed;
+      }
+
+      /* Checkbox/radio: sem appearance-none (some :checked). */
+      /* Quantidade no carrinho: sem caixa de texto global (h-8, px-2, borda full). */
+      input:not([type="checkbox"]):not([type="radio"]):not([data-cart-action="input"]), select {
+        @apply appearance-none bg-background border border-foreground/10 rounded-cc text-foreground px-2 h-8 text-sm;
+      }
+
+      input:not([type="checkbox"]):not([type="radio"]):not([data-cart-action="input"]):focus-visible, select:focus-visible {
+        outline: none;
+        @apply ring-2 ring-primary;
+      }
+
+      input[data-cart-action="input"] {
+        appearance: none;
+        -webkit-appearance: none;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      .bg-primary {
+        color: #fff;
+      }
+
+      .bg-background {
+        color: rgb(var(--foreground));
+      }
+
+      .btn-primary {
+        @apply font-semibold rounded-cc border border-white/20
+        px-4 h-9 flex gap-2 items-center justify-center text-sm shadow-sm shadow-black/15 disabled:opacity-50;
+        background-color: hsl(var(--primary));
+        background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12));
+        color: #fff;
+      }
+
+      .btn-primary:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px hsl(var(--primary) / 0.35);
+      }
+
+      .btn-secondary {
+        @apply bg-foreground/5 font-semibold border rounded-cc
+        px-4 h-9 flex gap-2 items-center justify-center text-sm disabled:opacity-50;
+      }
+
+      .btn-outline {
+        @apply bg-transparent font-semibold border border-foreground/10 rounded-cc
+        px-4 h-9 flex gap-2 items-center justify-center text-sm text-foreground disabled:opacity-50;
+      }
+
+      .btn-ghost {
+        @apply bg-transparent font-semibold rounded-cc
+        px-4 h-9 flex gap-2 items-center justify-center text-sm disabled:opacity-50;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+  <% if store.settings and store.settings.gtm_id != blank %>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= store.settings.gtm_id %>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <% endif %>
+  <% render "components/header" %>
+
+  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+    <% if config.background_image == blank %><div class="grid-background w-full h-full opacity-60"></div><% endif %>
+  </div>
+
+  <% if config.background_image != blank %>
+    <img
+      alt="Background image"
+      class="fixed object-cover select-none pointer-events-none custom-bg-mask w-full h-full top-0 z -z-20" 
+      src="<%= config.background_image %>"
+    />
+  <% endif %>
+
+  <main class="flex-1"><% block %><% endblock %></main>
+
+  <% render "components/footer" %>
+
+  <script>
+    const store = {
+      currency: '<%= store.currency %>',
+      subdomain: '<%= store.subdomain %>',
+      enable_chat: <% if store.enable_chat %>true<% else %>false<% endif %>,
+      logo_url: '<%= store.logo_url %>',
+    };
+
+    // Configuração runtime da Nerix.
+    // `baseUrl` é sempre o origin atual. Em dev, precisamos preservar em todos
+    // os links internos qual loja carregar — tanto quando a URL atual for
+    // `/?store=<sub>` quanto `/path/...` sem query. Pra isso, o backend sempre
+    // injeta o subdomain da loja e o frontend decide se deve ou não anexar
+    // `?store=` aos links (em produção, o hostname já identifica a loja).
+    window.NERIX = (function () {
+      var params = new URLSearchParams(window.location.search);
+      var hostname = window.location.hostname;
+      var pathname = window.location.pathname || '/';
+      var injectedSubdomain = '<%= store.subdomain %>';
+      // Em dev (localhost/127.0.0.1/ngrok) precisamos preservar qual loja
+      // carregar nos links internos. Em produção o subdomain está no hostname
+      // e `storeParam` fica vazio pra URLs limpas.
+      var isDev = hostname === 'localhost' || hostname === '127.0.0.1' ||
+        /\.ngrok(-free)?\.(app|io)$/.test(hostname) || /^\d+\.\d+\.\d+\.\d+$/.test(hostname);
+
+      var storeParam = '';
+      var urlMode = 'query';
+      if (isDev) {
+        storeParam = params.get('store') || injectedSubdomain || '';
+        // Se o primeiro segmento do path é o subdomain (ex: `/adada/...`),
+        // usamos "path mode" pros links internos ficarem consistentes
+        // (senão misturaria `/adada/x` com `/y?store=adada`).
+        var firstSeg = pathname.split('/').filter(Boolean)[0] || '';
+        if (firstSeg && firstSeg === storeParam) urlMode = 'path';
+      }
+      return {
+        baseUrl: window.location.origin,
+        storeParam: storeParam,
+        urlMode: urlMode,
+        /** Subdomínio real da loja (sempre) — chave do localStorage do cliente. */
+        shopSubdomain: injectedSubdomain,
+      };
+    })();
+
+    // Helper para montar uma URL interna da loja preservando o subdomain
+    // (path mode ou query mode) em dev.
+    function shopUrl(pathname, extraParams) {
+      var base = window.NERIX.baseUrl;
+      var storeParam = window.NERIX.storeParam;
+      var url;
+      if (storeParam && window.NERIX.urlMode === 'path') {
+        url = base + '/' + encodeURIComponent(storeParam) + (pathname === '/' ? '' : pathname);
+      } else {
+        url = base + pathname;
+        if (storeParam) {
+          url += (url.indexOf('?') === -1 ? '?' : '&') + 'store=' + encodeURIComponent(storeParam);
+        }
+      }
+      if (extraParams) url += (url.indexOf('?') === -1 ? '?' : '&') + extraParams;
+      return url;
+    }
+
+    // Em dev, reescrevemos os <a href="/..."> internos para preservar o
+    // subdomain (path mode ou query mode). Em produção vira no-op.
+    (function rewriteLinks() {
+      var storeParam = window.NERIX.storeParam;
+      if (!storeParam) return;
+      var mode = window.NERIX.urlMode;
+      var pathPrefix = '/' + storeParam;
+
+      function shouldRewrite(href) {
+        if (!href) return false;
+        if (href.indexOf('//') === 0 || /^[a-z]+:/i.test(href)) return false;
+        if (href.indexOf('/') !== 0) return false;
+        if (href.indexOf('/api/') === 0 || href.indexOf('/uploads') === 0) return false;
+        if (/[?&]store=/.test(href)) return false;
+        if (mode === 'path' && (href === pathPrefix || href.indexOf(pathPrefix + '/') === 0)) return false;
+        return true;
+      }
+
+      function rewrite(href) {
+        if (mode === 'path') {
+          return href === '/' ? pathPrefix : pathPrefix + href;
+        }
+        return href + (href.indexOf('?') === -1 ? '?' : '&') + 'store=' + encodeURIComponent(storeParam);
+      }
+
+      function run() {
+        document.querySelectorAll('a[href]').forEach(function (a) {
+          var href = a.getAttribute('href');
+          if (shouldRewrite(href)) a.setAttribute('href', rewrite(href));
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run);
+      } else {
+        run();
+      }
+      // Reexecuta após lazy-load (quando main.js injeta HTML no DOM).
+      var observer = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (m.addedNodes && m.addedNodes.length) { run(); return; }
+        }
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
+
+  <script>
+    // Limpa dos títulos de produto as frases que violam política de anúncios
+    // (porcentagem de chance, "grátis", "garantido"). É só na exibição — o
+    // nome cadastrado no painel continua o mesmo.
+    (function limparTitulos() {
+      var REGRAS = [
+        [/\b\d{1,3}\s*%\s*(de\s*)?(chance|chances)\s*(de\s*)?/gi, ''],
+        [/\b\d{1,3}\s*%\s*/g, ''],
+        [/\bgarantid[oa]s?\b/gi, ''],
+        [/\bgr[áa]tis\b/gi, ''],
+        [/\bfree\b/gi, ''],
+        [/\bganhe\b/gi, ''],
+      ];
+      var SELETORES = '.lcard-name, .legas-pdp-title, #package-name, [data-nome-produto]';
+
+      function limpar(txt) {
+        var fora = txt;
+        REGRAS.forEach(function (r) { fora = fora.replace(r[0], r[1]); });
+        return fora
+          .replace(/\(\s*\)/g, '')
+          .replace(/\s*\+\s*\+\s*/g, ' + ')
+          .replace(/^[\s+•|,\-–]+/, '')
+          .replace(/[\s+•|,\-–]+$/, '')
+          .replace(/\s{2,}/g, ' ')
+          .trim();
+      }
+
+      function aplicar(raiz) {
+        var alvos = (raiz.querySelectorAll ? raiz.querySelectorAll(SELETORES) : []);
+        // sem marcar como "já limpo": o script do produto reescreve o nome
+        // quando troca de variação, então precisa limpar de novo
+        Array.prototype.forEach.call(alvos, function (el) {
+          var antes = el.textContent;
+          var depois = limpar(antes);
+          if (depois && depois !== antes) {
+            el.textContent = depois;
+            if (el.hasAttribute('title')) el.setAttribute('title', depois);
+          }
+        });
+      }
+
+      function tudo() {
+        aplicar(document);
+        // título da aba e descrição, que também entram na análise do anúncio
+        var t = limpar(document.title);
+        if (t && t !== document.title) document.title = t;
+        var meta = document.querySelector('meta[name="description"]');
+        if (meta) {
+          var d = limpar(meta.getAttribute('content') || '');
+          if (d) meta.setAttribute('content', d);
+        }
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tudo);
+      else tudo();
+
+      // produtos chegam por lazy-load e o nome é reescrito ao trocar variação
+      new MutationObserver(function () { aplicar(document); })
+        .observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+
+      [300, 1200, 3000].forEach(function (ms) { setTimeout(tudo, ms); });
+    })();
+  </script>
+
+  <script>
+    // Animações de entrada: cada bloco aparece quando entra na tela.
+    (function legasReveal() {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) return;
+
+      document.documentElement.classList.add('legas-js');
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        });
+      // threshold 0: blocos muito altos nunca chegariam a mostrar 12% da
+      // própria altura na tela e ficariam invisíveis para sempre.
+      }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+
+      function watch(root) {
+        (root.querySelectorAll ? root.querySelectorAll('.legas-anim') : []).forEach(function (el) {
+          if (el.dataset.legasWatched) return;
+          el.dataset.legasWatched = '1';
+          io.observe(el);
+        });
+      }
+
+      function start() { watch(document); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
+      }
+
+      // Blocos que chegam depois (lazy-load) também entram na animação.
+      new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          if (mutations[i].addedNodes && mutations[i].addedNodes.length) { watch(document); return; }
+        }
+      }).observe(document.documentElement, { childList: true, subtree: true });
+
+      // Rede de segurança: nada fica invisível para sempre.
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          document.querySelectorAll('.legas-anim:not(.is-in)').forEach(function (el) {
+            var r = el.getBoundingClientRect();
+            if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('is-in');
+          });
+        }, 1200);
+      });
+    })();
+  </script>
+
+  <script>
+    // As listas de produtos carregam depois e empurram a página para baixo.
+    // Por isso reposicionamos a âncora (#faq, #store...) algumas vezes após o carregamento.
+    (function fixAnchorAfterLazyLoad() {
+      function target() {
+        var hash = window.location.hash;
+        if (!hash || hash.length < 2) return null;
+        try { return document.querySelector(hash); } catch (e) { return null; }
+      }
+
+      function settle(times) {
+        var el = target();
+        if (!el) return;
+        el.scrollIntoView({ block: 'start' });
+        if (times > 0) setTimeout(function () { settle(times - 1); }, 350);
+      }
+
+      window.addEventListener('load', function () { settle(8); });
+      window.addEventListener('hashchange', function () { settle(8); });
+      document.addEventListener('click', function (ev) {
+        var a = ev.target.closest && ev.target.closest('a[href*="#"]');
+        if (!a) return;
+        var href = a.getAttribute('href') || '';
+        var hash = href.slice(href.indexOf('#'));
+        if (hash.length < 2) return;
+        var samePage = href.indexOf('#') === 0 || href.split('#')[0] === '' ||
+          href.split('#')[0] === window.location.pathname || href.split('#')[0] === '/';
+        if (samePage && document.querySelector(hash)) setTimeout(function () { settle(6); }, 60);
+      });
+    })();
+  </script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <script src="/scripts/nerix-runtime.js"></script>
+  <script src="/scripts/main.js"></script>
+  <script src="/scripts/shop-header-auth.js"></script>
+  <script src="/scripts/cart.js"></script>
+  <script src="/scripts/dialog.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.js"></script>
+
+  <% assign scripts_arr = scripts | split: ', ' %>
+  <% if scripts_arr %>
+    <% for src in scripts_arr %>
+      <script src="<%= src %>"></script>
+    <% endfor %>
+  <% endif %>
+</body>
+</html>

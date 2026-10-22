@@ -1,0 +1,526 @@
+﻿<% layout "layouts/layout", page_title: 'Preview v-29' %>
+
+<style>
+  /* Estilos da home. */
+  .v29 { --v-line: rgba(255,255,255,.09); --v-panel: rgba(255,255,255,.045); }
+  .v29 section { padding: 2.6rem 0; }
+  .v29 .v-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem; padding: .4rem 1rem; border-radius: 999px;
+    background: rgba(255,105,180,.12); border: 1px solid rgba(255,105,180,.35); color: #E83E8C;
+    font-size: .72rem; font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
+  }
+  .v29 .v-h2 { font-size: clamp(1.7rem, 3.6vw, 2.7rem); font-weight: 900; letter-spacing: -.02em; margin: .5rem 0 0; }
+  .v29 .v-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .35rem; margin-bottom: 1.8rem; }
+  .v29 .v-sub { color: rgb(var(--muted-foreground)); max-width: 44rem; margin: .4rem auto 0; }
+
+  /* Banner */
+  .v29 .v-hero { border-radius: 22px; overflow: hidden; border: 1px solid var(--v-line);
+    box-shadow: 0 30px 70px -34px rgba(232,62,140,.5); }
+  .v29 .v-hero img { display: block; width: 100%; }
+
+  /* Faixa de clientes + selos */
+  .v29 .v-clientes { text-align: center; margin-top: 2.6rem; }
+  .v29 .v-clientes h2 { font-size: clamp(1.9rem, 5.4vw, 3.4rem); font-weight: 900; line-height: 1.02;
+    letter-spacing: -.02em; margin: 0; }
+  .v29 .v-clientes h2 .v-num {
+    display: block;
+    background: linear-gradient(135deg,#FFD9EC,#FF69B4 45%,#E83E8C);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .v29 .v-selos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.8rem; }
+  .v29 .v-selo {
+    position: relative; overflow: visible;
+    display: flex; align-items: center; justify-content: space-between; gap: .6rem;
+    min-height: 132px; padding: 1.1rem 1.2rem; border-radius: 18px; text-align: left;
+    background: linear-gradient(140deg, rgba(255,105,180,.10), rgba(255,240,246,.9));
+    border: 1px solid #FFB7D5;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+  }
+  .v29 .v-selo:hover { transform: translateY(-4px); border-color: rgba(255,105,180,.7);
+    box-shadow: 0 20px 44px -22px rgba(255,105,180,.6); }
+  .v29 .v-selo b { display: block; font-size: 1.02rem; font-weight: 800; margin-bottom: .25rem; }
+  .v29 .v-selo p { margin: 0; font-size: .85rem; line-height: 1.45; color: rgb(var(--muted-foreground)); }
+  /* O Ã­cone Ã© maior que o card e estoura pra fora, como na referÃªncia. */
+  .v29 .v-selo .v-icon {
+    flex: none; position: relative; z-index: 2;
+    width: 158px; height: 158px; display: grid; place-items: center;
+    margin: -2.4rem -.6rem -2.4rem 0;
+  }
+  .v29 .v-selo .v-icon::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at 50% 45%, rgba(255,105,180,.35), rgba(255,105,180,0) 68%);
+  }
+  .v29 .v-selo .v-emoji {
+    position: relative; width: 152px; height: 152px; display: block;
+    filter: drop-shadow(0 16px 26px rgba(210,40,120,.35)) drop-shadow(0 6px 18px rgba(255,105,180,.45));
+    transition: transform .3s;
+  }
+  .v29 .v-selo:hover .v-emoji { transform: translateY(-3px) rotate(-3deg) scale(1.04); }
+
+  /* Escolha seu jogo */
+  .v29 .v-frame {
+    padding: 2.2rem 2rem 2.4rem; border-radius: 26px;
+    background: linear-gradient(180deg, rgba(255,240,246,.95), rgba(255,214,233,.75));
+    border: 1px solid rgba(255,105,180,.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 40px 80px -55px rgba(255,105,180,.55);
+  }
+  .v29 .v-games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+  .v29 .v-game {
+    position: relative; display: block; border-radius: 16px; overflow: hidden;
+    border: 1px solid #FFB7D5; background: rgba(255,255,255,.6);
+    /* 2/1 = proporÃ§Ã£o exata das artes (800x400), assim nada Ã© cortado */
+    aspect-ratio: 2 / 1;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+  }
+  .v29 .v-game img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .v29 .v-game:hover { transform: translateY(-5px); border-color: rgba(255,105,180,.75);
+    box-shadow: 0 20px 44px -20px rgba(255,105,180,.6); }
+
+  /* Robux em destaque */
+  .v29 .v-robux { display: block; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,105,180,.45);
+    position: relative; margin-bottom: 1.2rem; }
+  .v29 .v-robux img { width: 100%; display: block; }
+  .v29 .v-robux span { position: absolute; left: 1.2rem; bottom: 1rem; z-index: 2; font-weight: 900;
+    font-size: 1.1rem; text-shadow: 0 2px 12px rgba(0,0,0,.9); }
+
+  .v29 .v-aviso {
+    margin: .9rem 0 0; text-align: center;
+    font-size: .78rem; line-height: 1.5; color: rgb(var(--muted-foreground));
+    border: 1px solid var(--v-line); border-radius: 12px;
+    background: rgba(255,255,255,.03); padding: .6rem .9rem;
+  }
+
+  /* TÃ­tulo com as linhas dos lados, como no FÃªnix */
+  .v29 .v-rule { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.6rem; }
+  .v29 .v-rule::before, .v29 .v-rule::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,105,180,.55), transparent);
+  }
+  .v29 .v-rule h2 {
+    margin: 0; flex: none; text-align: center;
+    font-size: clamp(1.4rem, 3.2vw, 2.4rem); font-weight: 900; letter-spacing: -.02em;
+  }
+
+  /* Contador de clientes */
+  .v29 .v-contador { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.8rem; }
+  .v29 .v-contador-selo {
+    flex: none; width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 35%, rgba(255,105,180,.4), rgba(232,62,140,.18));
+    border: 1px solid rgba(255,105,180,.55); color: #E83E8C; font-size: 2rem;
+    box-shadow: 0 0 34px rgba(255,105,180,.4);
+  }
+  .v29 .v-contador h2 {
+    margin: 0; font-size: clamp(1.7rem, 4.4vw, 3rem); font-weight: 900;
+    line-height: 1.06; letter-spacing: -.02em;
+  }
+  .v29 .v-contador-num {
+    background: linear-gradient(135deg, #FFD9EC, #FF69B4 45%, #E83E8C);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .v29 .v-contador p { margin: .5rem 0 0; color: rgb(var(--muted-foreground)); font-size: .95rem; }
+
+  /* Feedbacks */
+  .v29 .v-fb-wrap { position: relative; }
+  .v29 .v-fb-track {
+    display: flex; gap: 1rem; overflow-x: auto; padding: .25rem .1rem 1rem;
+    scroll-snap-type: x proximity; scroll-behavior: smooth;
+    scrollbar-width: thin; scrollbar-color: hsl(var(--primary)) transparent;
+  }
+  .v29 .v-fb-track::-webkit-scrollbar { height: 5px; }
+  .v29 .v-fb-track::-webkit-scrollbar-thumb { background: hsl(var(--primary)); border-radius: 99px; }
+  .v29 .v-fb-load { color: rgb(var(--muted-foreground)); padding: 2rem .5rem; }
+  .v29 .v-fb {
+    flex: 0 0 340px; max-width: 340px; scroll-snap-align: start;
+    border-radius: 18px; padding: 1.1rem;
+    background: linear-gradient(150deg, rgba(255,105,180,.10), rgba(255,240,246,.9));
+    border: 1px solid #FFB7D5;
+    display: flex; flex-direction: column; gap: .7rem;
+  }
+  .v29 .v-fb-top { display: flex; align-items: center; gap: .7rem; }
+  .v29 .v-fb-av {
+    width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+    font-weight: 900; font-size: .9rem; color: #fff; flex: none;
+    background: linear-gradient(135deg, #FF69B4, #E83E8C);
+  }
+  .v29 .v-fb-name { font-size: .92rem; font-weight: 800; line-height: 1.1; }
+  .v29 .v-fb-date { font-size: .74rem; color: rgb(var(--muted-foreground)); }
+  .v29 .v-fb-stars { margin-left: auto; color: #fbbf24; font-size: .85rem; letter-spacing: .05em; }
+  .v29 .v-fb-text { font-size: .95rem; color: #5c3a4d; line-height: 1.45; min-height: 3.2rem; }
+  .v29 .v-fb-prod {
+    margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--v-line);
+    display: flex; align-items: center; justify-content: space-between; gap: .6rem;
+  }
+  .v29 .v-fb-prod span {
+    font-size: .76rem; color: rgb(var(--muted-foreground));
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .v29 .v-fb-ver {
+    flex: none; font-size: .74rem; font-weight: 900; letter-spacing: .06em;
+    padding: .35rem .75rem; border-radius: 9px;
+    background: rgba(255,105,180,.14); border: 1px solid rgba(255,105,180,.4); color: #E83E8C;
+  }
+  .v29 .v-fb-btn {
+    position: absolute; top: calc(50% - 1.2rem); z-index: 3;
+    width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255,255,255,.95); border: 1px solid rgba(255,105,180,.45); color: #E83E8C;
+  }
+  .v29 .v-fb-btn:hover { background: hsl(var(--primary)); }
+  .v29 .v-fb-prev { left: -.5rem; }
+  .v29 .v-fb-next { right: -.5rem; }
+
+  /* Texto de apresentaÃ§Ã£o */
+  .v29 .v-seo { max-width: 62rem; }
+  .v29 .v-seo h2 { font-size: clamp(1.4rem, 2.8vw, 2rem); font-weight: 900; margin: 0 0 .8rem; }
+  .v29 .v-seo h3 { font-size: 1.05rem; font-weight: 800; margin: 1.6rem 0 .5rem; color: #E83E8C; }
+  .v29 .v-seo p { margin: 0; color: rgb(var(--muted-foreground)); line-height: 1.7; font-size: .95rem; }
+  .v29 .v-seo b { color: #D6336C; }
+
+  @media (max-width: 1023px) {
+    .v29 .v-games { grid-template-columns: repeat(2, 1fr); }
+    .v29 .v-fb-btn { display: none; }
+    .v29 .v-selos { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 639px) {
+    .v29 .v-games { grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+    .v29 .v-frame { padding: 1.1rem; }
+    .v29 .v-selo { min-height: 118px; }
+    .v29 .v-selo .v-icon { width: 130px; height: 130px; margin: -1.8rem -.4rem -1.8rem 0; }
+    .v29 .v-selo .v-emoji { width: 126px; height: 126px; }
+  }
+</style>
+
+<div class="v29 space-y-2 py-6 sm:py-10">
+
+  <!-- Banner -->
+  <section class="container" style="padding-top:0">
+    <div class="v-hero legas-anim" data-anim="zoom">
+      <img src="/styles/legas-bloxx/banner-home.svg?v=1" alt="Legas Bloxx">
+    </div>
+
+    <!-- BenefÃ­cios -->
+    <div class="v-clientes legas-anim">
+      <div class="v-rule"><h2>Tudo simples, rÃ¡pido e fÃ¡cil.</h2></div>
+
+      <div class="v-selos legas-stagger">
+        <div class="v-selo">
+          <div>
+            <b>SeguranÃ§a</b>
+            <p>Ambiente seguro para pagamentos online</p>
+          </div>
+          <span class="v-icon">
+            <svg class="v-emoji" viewBox="0 0 120 120" aria-hidden="true">
+              <defs>
+                <linearGradient id="v29sA" x1="26" y1="10" x2="96" y2="106" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ffd6ec"/><stop offset=".42" stop-color="#ff69b4"/><stop offset="1" stop-color="#d6336c"/>
+                </linearGradient>
+                <linearGradient id="v29sGloss" x1="30" y1="14" x2="70" y2="64" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ffffff" stop-opacity=".72"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                </linearGradient>
+                <radialGradient id="v29sShadow" cx="60" cy="110" r="34" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#020a1e" stop-opacity=".75"/><stop offset="1" stop-color="#020a1e" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="60" cy="110" rx="32" ry="7" fill="url(#v29sShadow)"/>
+              <!-- profundidade: placa de trÃ¡s -->
+              <path d="M60 12l37 14v33c0 25-16 40-37 52C39 99 23 84 23 59V26l37-14z" fill="#d6336c"/>
+              <path d="M60 15l33 13v31c0 22-14 36-33 47-19-11-33-25-33-47V28l33-13z" fill="url(#v29sA)"/>
+              <path d="M60 15l33 13v31c0 22-14 36-33 47V15z" fill="#d6336c" opacity=".14"/>
+              <path d="M60 15l33 13v31c0 22-14 36-33 47-19-11-33-25-33-47V28l33-13z" fill="url(#v29sGloss)"/>
+              <path d="M42 60l12 12 24-26" fill="none" stroke="#a02060" stroke-opacity=".35" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.5,2.5)"/>
+              <path d="M42 60l12 12 24-26" fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+        <div class="v-selo">
+          <div>
+            <b>Entrega automÃ¡tica</b>
+            <p>Enviado no e-mail e no site apÃ³s o pagamento</p>
+          </div>
+          <span class="v-icon">
+            <svg class="v-emoji" viewBox="0 0 120 120" aria-hidden="true">
+              <defs>
+                <linearGradient id="v29rA" x1="40" y1="24" x2="88" y2="84" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#fff0f6"/><stop offset=".35" stop-color="#ffb7d5"/><stop offset="1" stop-color="#e83e8c"/>
+                </linearGradient>
+                <linearGradient id="v29rFin" x1="20" y1="60" x2="54" y2="100" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ff69b4"/><stop offset="1" stop-color="#d6336c"/>
+                </linearGradient>
+                <linearGradient id="v29rFire" x1="56" y1="70" x2="26" y2="108" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#ffb7d5" stop-opacity=".85"/><stop offset="1" stop-color="#ff69b4" stop-opacity="0"/>
+                </linearGradient>
+                <radialGradient id="v29rShadow" cx="60" cy="110" r="34" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#020a1e" stop-opacity=".7"/><stop offset="1" stop-color="#020a1e" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="62" cy="110" rx="30" ry="6" fill="url(#v29rShadow)"/>
+              <path d="M44 74c-9 9-14 22-14 36 13-1 25-6 33-15L44 74z" fill="url(#v29rFire)"/>
+              <path d="M28 62c-7 3-12 9-15 16 7 0 13-1 19-4l-4-12zM46 90c3 6 2 13-2 19 6-3 10-8 12-13l-10-6z" fill="url(#v29rFin)"/>
+              <path d="M95 8C71 9 52 19 39 35c-7 8-12 17-16 27l33 33c10-4 19-9 27-16 16-13 26-32 27-56 0-8-6-15-15-15z" fill="url(#v29rA)"/>
+              <path d="M95 8C71 9 52 19 39 35l41 41c16-13 26-32 27-56 0-8-6-15-15z" fill="#a02060" opacity=".12"/>
+              <path d="M88 16c-17 2-31 10-41 21l8 8c11-13 24-22 39-26-2-2-4-3-6-3z" fill="#ffffff" opacity=".5"/>
+              <circle cx="73" cy="44" r="14" fill="#d6336c"/>
+              <circle cx="73" cy="44" r="10" fill="#fff0f6"/>
+              <circle cx="69" cy="40" r="3.4" fill="#ffffff"/>
+            </svg>
+          </span>
+        </div>
+        <div class="v-selo">
+          <div>
+            <b>Suporte Ativo</b>
+            <p>Equipe especializada pronta para ajudar</p>
+          </div>
+          <span class="v-icon">
+            <svg class="v-emoji" viewBox="0 0 120 120" aria-hidden="true">
+              <defs>
+                <linearGradient id="v29hA" x1="20" y1="18" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ffd6ec"/><stop offset=".45" stop-color="#ff69b4"/><stop offset="1" stop-color="#d6336c"/>
+                </linearGradient>
+                <linearGradient id="v29hCup" x1="14" y1="58" x2="40" y2="104" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ff69b4"/><stop offset="1" stop-color="#d6336c"/>
+                </linearGradient>
+                <radialGradient id="v29hShadow" cx="60" cy="112" r="36" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#020a1e" stop-opacity=".7"/><stop offset="1" stop-color="#020a1e" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="60" cy="112" rx="34" ry="6" fill="url(#v29hShadow)"/>
+              <path d="M22 70V58a38 38 0 0176 0v12" fill="none" stroke="#d6336c" stroke-width="17" stroke-linecap="round"/>
+              <path d="M22 70V58a38 38 0 0176 0v12" fill="none" stroke="url(#v29hA)" stroke-width="13" stroke-linecap="round"/>
+              <path d="M28 52a34 34 0 0164 0" fill="none" stroke="#ffffff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
+              <rect x="10" y="60" width="26" height="42" rx="12" fill="#d6336c"/>
+              <rect x="12" y="62" width="22" height="38" rx="10" fill="url(#v29hCup)"/>
+              <rect x="16" y="66" width="8" height="22" rx="4" fill="#ffffff" opacity=".35"/>
+              <rect x="84" y="60" width="26" height="42" rx="12" fill="#d6336c"/>
+              <rect x="86" y="62" width="22" height="38" rx="10" fill="url(#v29hCup)"/>
+              <path d="M96 100v4a11 11 0 01-11 11H74" fill="none" stroke="url(#v29hA)" stroke-width="8" stroke-linecap="round"/>
+              <rect x="38" y="48" width="52" height="38" rx="15" fill="#d6336c"/>
+              <rect x="40" y="46" width="52" height="38" rx="15" fill="#fff0f6"/>
+              <path d="M54 82l-3 14 17-12z" fill="#fff0f6"/>
+              <circle cx="55" cy="65" r="4.6" fill="#ff69b4"/><circle cx="66" cy="65" r="4.6" fill="#ff69b4"/><circle cx="77" cy="65" r="4.6" fill="#ff69b4"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Escolha seu jogo -->
+  <% if categories and categories.size > 0 %>
+    <section class="container">
+      <div class="v-head legas-anim">
+        <span class="v-eyebrow"><i class="ph ph-game-controller" aria-hidden="true"></i> Escolha seu jogo</span>
+        <h2 class="v-h2">Escolha seu jogo</h2>
+        <p class="v-sub">Escolhe a categoria, paga no Pix e recebe na hora.</p>
+      </div>
+
+      <div class="v-frame">
+        <% for category in categories %>
+          <% if category.slug == 'robux' %>
+            <a href="/category/robux" class="v-robux">
+              <% if category.image %><img src="<%= category.image | cdn %>" alt="Robux"><% endif %>
+              <span>Robux <i class="ph ph-arrow-up-right"></i></span>
+            </a>
+          <% endif %>
+        <% endfor %>
+
+        <div class="v-games">
+          <% for category in categories %>
+            <% unless category.image or category.slug == 'teste-blox-fruits' or category.slug == 'robux' %>
+              <a href="#cat-<%= category.slug %>" class="v-game" title="<%= category.name %>">
+                <img src="/styles/legas-bloxx/cat2-<%= category.slug %>.svg?v=13" loading="lazy" alt="<%= category.name %>">
+              </a>
+            <% endunless %>
+          <% endfor %>
+        </div>
+      </div>
+    </section>
+  <% endif %>
+
+  <!-- CatÃ¡logo -->
+  <section id="store" class="container scroll-m-24">
+    <div class="v-head legas-anim">
+      <span class="v-eyebrow"><i class="ph ph-squares-four" aria-hidden="true"></i> CatÃ¡logo completo</span>
+      <h2 class="v-h2">Todos os produtos</h2>
+      <p class="v-sub">Contas, frutas, gamepasses e muito mais â€” tudo com entrega rÃ¡pida.</p>
+    </div>
+
+    <div class="space-y-12 sm:space-y-20">
+      <% for category in categories %>
+        <% unless category.image or category.slug == 'robux' or category.id == 3210 or category.name == 'Robux' or category.slug == 'teste-blox-fruits' %>
+          <% render "components/category-loader", category: category, show_empty: true %>
+
+          <% assign sub_filter = category.sub_categories | where_exp: "sub_category", "sub_category.id != category.id" %>
+          <% for sub_category in sub_filter %>
+            <% unless sub_category.slug == 'robux' or sub_category.name == 'Robux' %>
+              <% render "components/category-loader", category: sub_category %>
+            <% endunless %>
+          <% endfor %>
+        <% endunless %>
+      <% endfor %>
+    </div>
+  </section>
+
+  <!-- Feedbacks reais da loja -->
+  <section class="container scroll-m-24" id="feedbacks">
+    <div class="v-contador legas-anim">
+      <span class="v-contador-selo"><i class="ph ph-star" aria-hidden="true"></i></span>
+      <div>
+        <h2>
+          Mais de <span class="v-contador-num" id="v-contador-num" data-alvo="10000">0</span><br>
+          Clientes Satisfeitos
+        </h2>
+        <p>Veja o feedback de quem jÃ¡ comprou com a gente.</p>
+      </div>
+    </div>
+
+    <div class="v-fb-wrap legas-anim">
+      <button type="button" class="v-fb-btn v-fb-prev" aria-label="Anterior"><i class="ph ph-caret-left"></i></button>
+      <div class="v-fb-track" id="v-fb-track">
+        <div class="v-fb-load">Carregando feedbacksâ€¦</div>
+      </div>
+      <button type="button" class="v-fb-btn v-fb-next" aria-label="PrÃ³ximo"><i class="ph ph-caret-right"></i></button>
+    </div>
+  </section>
+
+  <% render "components/faq" %>
+
+  <!-- Texto de apresentaÃ§Ã£o (ajuda o site a aparecer no Google) -->
+  <section class="container v-seo legas-anim">
+    <h2>O que Ã© a Legas Bloxx?</h2>
+    <p>
+      A Legas Bloxx Ã© uma loja brasileira de produtos digitais para jogos de Roblox. Em vez de passar semanas
+      fazendo farm para conseguir uma fruta permanente, uma conta evoluÃ­da ou um gamepass especÃ­fico, vocÃª compra
+      exatamente o que precisa, paga no Pix e recebe logo depois da confirmaÃ§Ã£o.
+    </p>
+
+    <h3>Quais jogos a loja atende</h3>
+    <p>
+      O catÃ¡logo cobre principalmente <b>Blox Fruits</b>, com contas, frutas permanentes, espadas como Cursed Dual
+      Katana e Soul Guitar, God Human e gamepasses. TambÃ©m trabalhamos com <b>Rivals</b> (gamepasses e pacotes de
+      chaves), <b>Fisch</b>, <b>Steal a Brainrot</b>, <b>99 Nights in the Forest</b> e Robux em qualquer quantidade,
+      com o valor calculado na hora na pÃ¡gina de Robux.
+    </p>
+
+    <h3>Como funciona a compra</h3>
+    <p>
+      VocÃª escolhe o produto, finaliza no Pix e a entrega Ã© liberada automaticamente: o pedido aparece na sua conta
+      e vocÃª abre um chat automÃ¡tico para receber. NÃ£o precisa negociar com vendedor nem esperar alguÃ©m responder
+      para comeÃ§ar a jogar.
+    </p>
+
+    <h3>SeguranÃ§a</h3>
+    <p>
+      O pagamento Ã© processado pela plataforma, com o pedido registrado na sua conta e no e-mail usado na compra.
+      Se algo vier errado ou nÃ£o funcionar, Ã© sÃ³ chamar o suporte com o nÃºmero do pedido em mÃ£os que a gente resolve.
+    </p>
+  </section>
+
+  <section class="container" style="padding-top:0">
+    <div class="legas-cta legas-anim" data-anim="zoom">
+      <div>
+        <h2 class="font-black text-2xl sm:text-3xl text-white tracking-tight">Pronto para ficar PRO?</h2>
+        <p class="text-[#E83E8C]/70 mt-1">Escolhe o produto agora e já volta pro jogo.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="#store" class="btn-primary h-11 px-6">Ver produtos <i class="ph ph-arrow-right w-4 h-4" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Feedbacks reais da loja (avaliaÃ§Ãµes jÃ¡ aprovadas no painel).
+  (function () {
+    var track = document.getElementById('v-fb-track');
+    if (!track) return;
+
+    function iniciais(nome) {
+      var p = String(nome || '').trim().split(/\s+/).filter(Boolean);
+      if (!p.length) return '?';
+      return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+    }
+
+    function dataBr(iso) {
+      try {
+        return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+      } catch (e) { return ''; }
+    }
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    fetch('/api/public/customer/reviews?page=1&limit=18')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var lista = (data && data.reviews) || [];
+        lista = lista.filter(function (r) { return r && r.comment && String(r.comment).trim(); });
+        if (!lista.length) {
+          track.closest('section').style.display = 'none';
+          return;
+        }
+
+        track.innerHTML = lista.map(function (r) {
+          var nome = (r.customer && r.customer.name) || 'Cliente';
+          var estrelas = 'â˜…â˜…â˜…â˜…â˜…'.slice(0, Math.max(1, Math.round(r.rating || 5)));
+          var prod = r.product || {};
+          var link = prod.slug ? '/package/' + prod.slug : '#store';
+          return '' +
+            '<article class="v-fb">' +
+            '  <div class="v-fb-top">' +
+            '    <span class="v-fb-av">' + esc(iniciais(nome)) + '</span>' +
+            '    <div>' +
+            '      <div class="v-fb-name">' + esc(nome) + '</div>' +
+            '      <div class="v-fb-date">' + esc(dataBr(r.created_at)) + '</div>' +
+            '    </div>' +
+            '    <span class="v-fb-stars">' + estrelas + '</span>' +
+            '  </div>' +
+            '  <p class="v-fb-text">â€œ' + esc(String(r.comment).trim()) + 'â€</p>' +
+            '  <div class="v-fb-prod">' +
+            '    <span>' + esc(prod.name || 'Produto da loja') + '</span>' +
+            '    <a class="v-fb-ver" href="' + link + '">VER</a>' +
+            '  </div>' +
+            '</article>';
+        }).join('');
+      })
+      .catch(function () {
+        track.closest('section').style.display = 'none';
+      });
+
+    // contador subindo atÃ© o nÃºmero, quando a seÃ§Ã£o aparece
+    (function () {
+      var el = document.getElementById('v-contador-num');
+      if (!el) return;
+      var alvo = Number(el.dataset.alvo) || 0;
+      // sem suporte a observer: mostra o nÃºmero direto, nunca zerado
+      if (!('IntersectionObserver' in window)) { el.textContent = alvo.toLocaleString('pt-BR'); return; }
+      // rede de seguranÃ§a, caso a animaÃ§Ã£o nÃ£o chegue a rodar
+      setTimeout(function () { if (el.textContent === '0') el.textContent = alvo.toLocaleString('pt-BR'); }, 4000);
+      var rodou = false;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting || rodou) return;
+          rodou = true;
+          var ini = performance.now(), dur = 1400;
+          function passoNum(t) {
+            var p = Math.min(1, (t - ini) / dur);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(alvo * eased).toLocaleString('pt-BR');
+            if (p < 1) requestAnimationFrame(passoNum);
+          }
+          requestAnimationFrame(passoNum);
+        });
+      }, { threshold: 0 });
+      io.observe(el);
+    })();
+
+    function passo(dir) { track.scrollBy({ left: dir * Math.min(track.clientWidth * .8, 720), behavior: 'smooth' }); }
+    var prev = document.querySelector('.v-fb-prev');
+    var next = document.querySelector('.v-fb-next');
+    if (prev) prev.addEventListener('click', function () { passo(-1); });
+    if (next) next.addEventListener('click', function () { passo(1); });
+  })();
+</script>

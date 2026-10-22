@@ -1,0 +1,103 @@
+<% layout "layouts/layout", scripts: '/scripts/auth.js', page_title: 'Login' %>
+
+<div class="flex items-center justify-center py-16 px-4">
+  <div class="w-full max-w-md">
+    <div class="rounded-2xl shadow-xl border p-7 sm:p-8 bg-background border-white/10">
+      <div class="text-center mb-6">
+        <% if theme.logo != blank %>
+          <div class="flex justify-center mb-4">
+            <img src="<%= theme.logo | cdn %>" alt="<%= store.name %>" class="h-12 w-12 rounded-lg object-contain" />
+          </div>
+        <% endif %>
+        <h2 class="text-2xl font-bold mb-2 text-foreground">Entrar por e-mail</h2>
+        <p class="text-sm text-muted-foreground">Digite seu e-mail para receber um código de acesso.</p>
+      </div>
+
+      <form id="magic-link-form" class="space-y-4">
+        <div class="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onclick="Nerix.requestGoogle()"
+            class="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/15 transition-all shadow-sm hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+            title="Entrar com Google"
+          >
+            <i class="ph ph-google-logo w-5 h-5 text-foreground" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            onclick="Nerix.requestDiscord()"
+            class="w-11 h-11 flex items-center justify-center rounded-full bg-[#5865F2] hover:bg-[#4752C4] text-white transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95 disabled:opacity-50"
+            title="Entrar com Discord"
+          >
+            <i class="ph ph-discord-logo w-5 h-5 text-white" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="relative my-2">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-white/10"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-background text-muted-foreground">ou</span>
+          </div>
+        </div>
+
+        <div id="email-step">
+          <label for="email" class="block text-sm font-semibold mb-2 text-foreground">
+            <i class="ph ph-envelope w-4 h-4 inline mr-1 align-text-bottom opacity-80" aria-hidden="true"></i>
+            E-mail
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            class="w-full px-4 py-2.5 border rounded-lg transition-all border-white/10 bg-white/5 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary"
+            placeholder="seu@email.com"
+          />
+        </div>
+
+        <div id="otp-step" class="hidden">
+          <label class="block text-sm font-semibold mb-2 text-center text-foreground">Código de verificação</label>
+          <div class="flex gap-2 justify-between">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input w-11 h-12 sm:w-12 text-center rounded-lg border border-white/10 bg-white/5 text-foreground text-lg" data-index="0" />
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input w-11 h-12 sm:w-12 text-center rounded-lg border border-white/10 bg-white/5 text-foreground text-lg" data-index="1" />
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input w-11 h-12 sm:w-12 text-center rounded-lg border border-white/10 bg-white/5 text-foreground text-lg" data-index="2" />
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input w-11 h-12 sm:w-12 text-center rounded-lg border border-white/10 bg-white/5 text-foreground text-lg" data-index="3" />
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input w-11 h-12 sm:w-12 text-center rounded-lg border border-white/10 bg-white/5 text-foreground text-lg" data-index="4" />
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input w-11 h-12 sm:w-12 text-center rounded-lg border border-white/10 bg-white/5 text-foreground text-lg" data-index="5" />
+          </div>
+          <p class="text-sm text-muted-foreground mt-2 text-center">
+            Código enviado para <span id="user-email" class="font-medium text-foreground"></span>
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-gradient-to-r from-[#FF69B4] to-[#E83E8C] text-white py-2.5 rounded-lg hover:from-[#F04FA0] hover:to-[#D6336C] disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium text-sm flex items-center justify-center gap-2 shadow-md submit-button"
+        >
+          Enviar código
+          <i class="ph ph-arrow-right w-4 h-4" aria-hidden="true"></i>
+        </button>
+
+        <p class="text-xs text-center text-muted-foreground">
+          Ao continuar, você concorda com nossos
+          <a
+            class="font-medium text-[#E83E8C] hover:text-[#D6336C] underline underline-offset-2 decoration-[#FF69B4]/80 hover:decoration-[#D6336C]"
+            href="/terms"
+          >Termos de Uso</a>.
+        </p>
+
+        <div class="w-full flex justify-center">
+          <button
+            type="button"
+            id="back-to-email"
+            class="h-fit text-sm w-fit text-muted-foreground hover:text-foreground hover:underline hidden mt-1"
+          >
+            Voltar e alterar e-mail
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

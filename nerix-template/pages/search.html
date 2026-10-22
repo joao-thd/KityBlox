@@ -1,0 +1,116 @@
+<% if query.bar == 'true' %>
+  <% if packages.data.size == 0 %>
+    <p class="p-4 text-sm">Nenhum produto encontrado.</p>
+  <% else %>
+    <div class="divide-y divide-white/10 overflow-x-hidden">
+      <% for package in packages.data %>
+        <% nerix
+          assign package_category = null
+
+          for category in categories
+            if category.id == package.category_id
+              assign package_category = category
+            endif
+
+            if category.sub_categories
+              for sub_category in category.sub_categories
+                if sub_category.id == package.category_id
+                  assign package_category = sub_category
+                  break
+                endif
+              endfor
+            endif
+          endfor
+        nerix %>
+
+        <% nerix
+          assign package_link = '/package/' | append: package.slug
+
+          if package.parent and package.parent.slug
+            assign package_link = '/package/' | append: package.parent.slug | append: '?variation=' | append: package.slug
+          endif
+        nerix %>
+
+        <a href="<%= package_link %>" class="p-4 flex justify-between items-center gap-3 transition-all hover:bg-white/10 min-w-0">
+          <div class="flex gap-2 items-center min-w-0 flex-1">
+            <% if package.image %>
+              <img src="<%= package.image %>" class="size-16 shrink-0 object-cover rounded-lg bg-white/5" width="64" height="64" loading="lazy" decoding="async" referrerpolicy="no-referrer"
+                onerror="if(!this.dataset._fb){this.dataset._fb='1';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2264%22 height=%2264%22%3E%3Crect fill=%22%2318181b%22 width=%2264%22 height=%2264%22/%3E%3C/svg%3E';}" />
+            <% else %>
+              <img src="<%= 'public/assets/templates/KOPY/no-image.png' | cdn %>" class="size-16 shrink-0 object-cover rounded-lg bg-white/5" width="64" height="64" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+            <% endif %>
+            <div class="min-w-0">
+              <p class="font-semibold line-clamp-1"><%= package.name %></p>
+              <p class="line-clamp-1 bg-primary/20 border border-primary w-fit px-1 py-0.5 rounded-[calc(var(--radius)-4px)] uppercase text-xs">
+                <% if package_category %>
+                  <%= package_category.name %>
+                <% else %>
+                  Sem categoria
+                <% endif %>
+              </p>
+            </div>
+          </div>
+
+          <% assign search_price = package.pricing.min | default: package.pricing.price %>
+          <p class="text-green-400 font-bold shrink-0 whitespace-nowrap"><%= search_price | format_price %><% if package.has_variations %>+<% endif %></p>
+        </a>
+      <% endfor %>
+    </div>
+  <% endif %>
+
+<% elsif query.package_list == 'true' %>
+  <% for package in packages.data %>
+    <% nerix
+      assign index = forloop.index0
+      assign delay = index | modulo: 5 | times: 0.15
+    nerix %>
+
+    <div class="reveal-fade-up" style="--delay: <%= delay %>s;">
+      <% render "components/package-card", package: package %>
+    </div>
+  <% endfor %>
+
+<% elsif query.current_package != blank and query.current_package != 'null' %>
+  <% nerix
+    assign current_id_str = query.current_package | to_integer
+    assign similar_packages = packages.data | reject: 'id', current_id_str
+    assign similar_count = similar_packages.size
+  nerix %>
+
+  <% if similar_count > 0 %>
+    <section class="container mt-12 reveal-fade-up">
+      <div class="flex items-center justify-between">
+        <h4 class="text-lg font-semibold leading-5">Produtos similares</h4>
+
+        <% if similar_count > 5 %>
+          <div class="flex items-center gap-2">
+            <button
+              id="similar-slider-prev"
+              class="active:scale-90 w-8 h-8 flex items-center
+              justify-center rounded-lg border bg-background hover:bg-foreground/10 transition"
+            >
+              <i class="ph ph-caret-left w-4 h-4" aria-hidden="true"></i>
+            </button>
+            <button
+              id="similar-slider-next"
+              class="active:scale-90 w-8 h-8 flex items-center
+              justify-center rounded-lg border bg-background hover:bg-foreground/10 transition"
+            >
+              <i class="ph ph-caret-right w-4 h-4" aria-hidden="true"></i>
+            </button>
+          </div>
+        <% endif %>
+      </div>
+
+      <div id="similar-packages-slider" class="mt-4 keen-slider rounded-lg">
+        <% for package in packages.data %>
+          <% unless package.id == query.current_package %>
+            <div class="keen-slider__slide">
+              <% render "components/package-card", package: package, is_similar_preview: true %>
+            </div>
+          <% endunless %>
+        <% endfor %>
+      </div>
+    </section>
+  <% endif %>
+<% endif %>
